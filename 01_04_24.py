@@ -114,6 +114,9 @@ def main_fun():
     # Bind the update_result function to changes in primary and secondary values
     primary.trace_add('write', update_result)
     secondary.trace_add('write', update_result)
+
+    print_btn = Button(root, text = "Print").place(x=375, y=750)
+
     root.mainloop()
 
 main_fun()
