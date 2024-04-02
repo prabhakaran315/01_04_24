@@ -115,5 +115,3 @@ primary.trace_add('write', update_result)
 secondary.trace_add('write', update_result)
 
 root.mainloop()
-
-
