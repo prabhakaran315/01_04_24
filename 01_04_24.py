@@ -51,7 +51,7 @@ def main_fun():
             for item in data[1:]:
                 treeview.insert("", "end", values=item)
 
-            print("Data loaded successfully.")
+            #print("Data loaded successfully.")
         except ValueError:
             result_var.set("Enter both two values!!!")
 
@@ -88,9 +88,12 @@ def main_fun():
     scrollbar = Scrollbar(frame, orient=VERTICAL, command=treeview.yview)
     scrollbar.pack(side=RIGHT, fill=Y)
 
+    scrollbar_1 = Scrollbar(frame, orient=HORIZONTAL, command=treeview.xview)
+    scrollbar_1.pack(side=BOTTOM, fill=X)
+
     # Configure the Treeview to use the Scrollbar
     treeview.config(yscrollcommand=scrollbar.set)
-
+    treeview.config(xscrollcommand=scrollbar_1.set)
     # Define headings for the columns
     treeview.heading('S.no', text='S.no')
     treeview.heading('Power', text='Power')
@@ -102,14 +105,14 @@ def main_fun():
     treeview.heading('KVAr', text='KVAr')
 
     # Set column widths
-    treeview.column('S.no', width=50)
-    treeview.column('Power', width=70)
-    treeview.column('OP', width=70)
-    treeview.column('CT/R', width=70)
-    treeview.column('Above / Below', width=100)
-    treeview.column('KVA', width=70)
-    treeview.column('kW', width=70)
-    treeview.column('KVAr', width=70)
+    treeview.column('S.no', width=50, anchor=CENTER)
+    treeview.column('Power', width=70, anchor=CENTER)
+    treeview.column('OP', width=70, anchor=CENTER)
+    treeview.column('CT/R', width=70, anchor=CENTER)
+    treeview.column('Above / Below', width=100, anchor=CENTER)
+    treeview.column('KVA', width=70, anchor=CENTER)
+    treeview.column('kW', width=70, anchor=CENTER)
+    treeview.column('KVAr', width=70, anchor=CENTER)
 
     # Bind the update_result function to changes in primary and secondary values
     primary.trace_add('write', update_result)
