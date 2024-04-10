@@ -2,40 +2,64 @@ import pandas as pd
 from tkinter import *
 from tkinter import ttk  # Import ttk for Treeview widget
 from openpyxl import load_workbook
-#from reportlab.pdfgen import canvas
+#-----------------------------------------------------------#
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import inch
+
+from reportlab.platypus import Image as ReportLabImage
+#-------------------------------------------------------------#
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle,  Paragraph, Spacer
+from reportlab.pdfgen import canvas
+from reportlab.lib.styles import getSampleStyleSheet
 import datetime
 
-def export_to_pdf(data):
-    timestamp = datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
-    pdf_file = f'{timestamp}.pdf'
-    doc = SimpleDocTemplate(pdf_file, pagesize=letter)
-    elements = []
-
-    # Define table data and style
-    table_data = [['S.no', 'Power', 'OP', 'CT/R', 'Above / Below', 'KVA', 'kW', 'KVAr']]
-    table_data.extend(data)  # Add data rows
-
-    table_style = TableStyle([('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                              ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-                              ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
-                              ('GRID', (0, 0), (-1, -1), 1, (0, 0, 0))])
-
-    # Create table
-    table = Table(table_data)
-    table.setStyle(table_style)
-    elements.append(table)
-
-    # Build PDF
-    doc.build(elements)
-
-def export_to_excel(data):
-    df = pd.DataFrame(data, columns=['S.no', 'Power', 'OP', 'CT/R', 'Above / Below', 'KVA', 'kW', 'KVAr'])
-    output_file = 'output.xlsx'
-    df.to_excel(output_file, index=False)
-
 def main_fun():
+    def export_to_pdf(data):
+        timestamp = datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
+        pdf_file = f'{timestamp}.pdf'
+        doc = SimpleDocTemplate(pdf_file, pagesize=A4, rightMargin=18, leftMargin=18, topMargin=18)
+        elements = []
+        extra_image_path = 'test.png'  # Replace with the actual path to your image
+        extra_img = ReportLabImage(extra_image_path, width=300, height=50)
+        elements.append(extra_img)
+
+        # text_content for generating pdf
+        text_content = (
+            f"Hello, In this PDF for power factor value calculation by the user by the date and time of {timestamp}\n"
+            f"Primary Value: {primary.get()}\n"
+            f"Secondary Value: {secondary.get()}\n"
+            f"Average Value: {result_var.get()}")
+
+        text_paragraph = Paragraph(text_content, getSampleStyleSheet()['BodyText'])
+        elements.append(text_paragraph)
+
+        spacer = Spacer(1, 12)  # Adjust the height of the spacer as needed (1 inch = 72 points)
+        elements.append(spacer)
+
+        # Define table data and style
+        table_data = [['S.no', 'Power', 'OP', 'CT/R', 'Above / Below', 'KVA', 'kW', 'KVAr']]
+        # Add more rows to table_data if needed
+        table_data.extend(data)  # Add data rows
+
+        table_style = TableStyle([('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                                  ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                                  ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+                                  ('GRID', (0, 0), (-1, -1), 1, (0, 0, 0))])
+
+        # Create table
+        table = Table(table_data)
+        table.setStyle(table_style)
+        elements.append(table)
+        done_lab = Label(root, text = "PDF Generated Successfully!!!").place(x=350, y= 700)
+        # Build PDF
+        doc.build(elements)
+
+    def export_to_excel(data):
+        df = pd.DataFrame(data, columns=['S.no', 'Power', 'OP', 'CT/R', 'Above / Below', 'KVA', 'kW', 'KVAr'])
+        output_file = 'output.xlsx'
+        df.to_excel(output_file, index=False)
+
     def update_result(*args):
         try:
             value1 = float(primary.get())
@@ -82,6 +106,9 @@ def main_fun():
             # Insert data into treeview
             for item in data[1:]:
                 treeview.insert("", "end", values=item)
+            return value1
+            return value2
+            return result_var
 
             #print("Data loaded successfully.")
         except ValueError:
@@ -118,19 +145,20 @@ def main_fun():
 
     # Create a Frame for Treeview and Scrollbar
     frame = Frame(root)
-    frame.place(x=10, y=200, width=780, height=500)
+    frame.place(x=10, y=200, width=760, height=500)
 
     # Create a Treeview widget for displaying data in a table
     treeview = ttk.Treeview(frame, columns=('S.no', 'Power', 'OP', 'CT/R', 'Above / Below', 'KVA', 'kW', 'KVAr'),
                             show='headings')
     treeview.pack(side=LEFT, fill=BOTH, expand=True)
 
-    # Create a Scrollbar
-    scrollbar = Scrollbar(frame, orient=VERTICAL, command=treeview.yview)
-    scrollbar.pack(side=RIGHT, fill=Y)
 
-    scrollbar_1 = Scrollbar(frame, orient=HORIZONTAL, command=treeview.xview)
-    scrollbar_1.pack(side=BOTTOM, fill=X)
+    # Create a Scrollbar
+    scrollbar = Scrollbar(root, orient=VERTICAL, command=treeview.yview)
+    scrollbar.place(x=775, y=200, height = 500)
+
+    scrollbar_1 = Scrollbar(root, orient=HORIZONTAL, command=treeview.xview)
+    scrollbar_1.place(x=0, y= 700, width = 800)
 
     # Configure the Treeview to use the Scrollbars
     treeview.config(yscrollcommand=scrollbar.set, xscrollcommand=scrollbar_1.set)
@@ -145,6 +173,7 @@ def main_fun():
     treeview.heading('kW', text='kW', anchor='center')
     treeview.heading('KVAr', text='KVAr', anchor='center')
 
+
     # Set column widths and anchor to center
     treeview.column('S.no', width=50, anchor='center')
     treeview.column('Power', width=70, anchor='center')
@@ -154,6 +183,7 @@ def main_fun():
     treeview.column('KVA', width=70, anchor='center')
     treeview.column('kW', width=70, anchor='center')
     treeview.column('KVAr', width=70, anchor='center')
+
 
     # Bind the update_result function to changes in primary and secondary values
     primary.trace_add('write', update_result)

@@ -12,6 +12,7 @@ def main_fun():
 
             # Load the Excel file into a DataFrame
             excel_file = 'data.xlsx'
+
             df = pd.read_excel(excel_file)
 
             # Define the input value
