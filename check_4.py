@@ -1,121 +1,271 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import messagebox, ttk, NW
 import math
+from reportlab.lib.pagesizes import A4
+from reportlab.platypus import Table, TableStyle, Spacer
+from reportlab.lib import colors
+import datetime
+from reportlab.platypus import BaseDocTemplate, PageTemplate, Frame, Paragraph
+from reportlab.lib.styles import ParagraphStyle
 
-def true_pf():
-# Sample data for the Treeview
-    data_1 = [
-        [1, "630A ASTRA - B3", 1252],
-        [2, "630A ASTRA - B5", 1809],
-        [3, "630A ASTRA - B10", 2782],
-        [4, "315A ASTRA - B3", 835],
-        [5, "315A ASTRA - B5", 1252],
-        [6, "315A ASTRA - B10", 1530],
-        [7, "420A ASTRA - B10", 1669],
-        [8, "420A ASTRA - B5", 1252],
-        [9, "210A ASTRA - B10", 1530],
-        [10, "210A ASTRA - B5", 696],
-        [11, "150A ASTRA - B5", 835],
-        [12, "150A ASTRA - B10", 1669]
-    ]
+class TruePowerFactorApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Project")
 
-    data_2 = [
-        [1, "630A ASTRA - B3", 255],
-        [2, "630A ASTRA - B5", 325],
-        [3, "630A ASTRA - B10", 500],
-        [4, "315A ASTRA - B3", 150],
-        [5, "315A ASTRA - B5", 225],
-        [6, "315A ASTRA - B10", 275],
-        [7, "420A ASTRA - B10", 300],
-        [8, "420A ASTRA - B5", 225],
-        [9, "210A ASTRA - B10", 275],
-        [10, "210A ASTRA - B5", 125],
-        [11, "150A ASTRA - B5", 150],
-        [12, "150A ASTRA - B10", 300]
-    ]
+        self.create_widgets()
+        self.data_1 = [
+            ["ID", "Panel Rating", "Optimal CT Ratio", "Condition", "kVA", "kVAr", "kW"],
+            [1,  "630A ASTRA - B3", 1252, "", "", "", ""],
+            [2,  "630A ASTRA - B5", 1809, "", "", "", ""],
+            [3,  "630A ASTRA - B10", 2782,"", "", "", ""],
+            [4,  "315A ASTRA - B3", 835,"", "", "", ""],
+            [5,  "315A ASTRA - B5", 1252,"", "", "", ""],
+            [6,  "315A ASTRA - B10", 1530,"", "", "", ""],
+            [7,  "420A ASTRA - B10", 1669,"", "", "", ""],
+            [8,  "420A ASTRA - B5", 1252,"", "", "", ""],
+            [9,  "210A ASTRA - B10", 1530,"", "", "", ""],
+            [10, "210A ASTRA - B5", 696,"", "", "", ""],
+            [11, "150A ASTRA - B5", 835,"", "", "", ""],
+            [12, "150A ASTRA - B10", 1669,"", "", "", ""]
+        ]
 
-    def submit():
+        self.data_2 = [
+            ["ID", "Panel Rating", "Optimal CT Ratio", "Condition","Optimal kW"],
+            [1, "630A ASTRA - B3", 1252,"",255],
+            [2, "630A ASTRA - B5", 1809,"", 325],
+            [3, "630A ASTRA - B10", 2782,"", 500],
+            [4, "315A ASTRA - B3", 835, "",150],
+            [5, "315A ASTRA - B5", 1252, "",225],
+            [6, "315A ASTRA - B10", 1530,"", 275],
+            [7, "420A ASTRA - B10", 1669, "",300],
+            [8, "420A ASTRA - B5", 1252, "",225],
+            [9, "210A ASTRA - B10", 1530, "",275],
+            [10, "210A ASTRA - B5", 696, "",125],
+            [11, "150A ASTRA - B5", 835, "",150],
+            [12, "150A ASTRA - B10", 1669, "",300]
+        ]
+
+        self.rows = len(self.data_1)
+        self.columns = len(self.data_1[0])  # Number of columns is the length of the first row
+
+    def create_widgets(self):
+        # Frames
+        self.frame_1 = tk.Frame(self.root, bg="Grey")
+        self.frame_1.pack(expand=True, fill=tk.BOTH)
+        self.frame_2 = tk.Frame(self.root, height=650, bg="White")
+        self.frame_2.pack(expand=True, fill=tk.BOTH)
+        self.frame_3 = tk.Frame(self.root, height=80, bg="Grey")
+        self.frame_3.pack(expand=True, fill=tk.BOTH)
+
+        # Labels
+        tk.Label(self.frame_1, text="Conditions to Achieve True Power Factor Performance", bg="Grey", fg="White", font=("Arial", 20, "bold")).pack(padx=10, pady=10)
+        tk.Label(self.frame_1, text="Enter the Primary value of transformer", bg="Grey", fg="White", font=("Arial", 14)).pack()
+        self.primary_entry = tk.Entry(self.frame_1, font=("Arial", 12))
+        self.primary_entry.pack()
+
+        tk.Label(self.frame_1, text="Enter the Secondary value of transformer", bg="Grey", fg="White", font=("Arial", 14)).pack()
+
+        self.secondary_entry = tk.Entry(self.frame_1, font=("Arial", 12))
+        self.secondary_entry.pack()
+
+        # Buttons
+        tk.Button(self.frame_1, text="Submit", command=self.submit, font=("Arial", 12, "bold")).pack(padx=10, pady=10)
+
+    def submit(self):
         try:
-            value_1 = float(primary.get())
-            value_2 = float(secondary.get())
+            value_1 = float(self.primary_entry.get())
+            value_2 = float(self.secondary_entry.get())
             cal_opt_val = round(value_1 / value_2)
-            kva = math.floor(1.732 * 415.0 * (value_1 / 1000))
-            kvar = float(kva * 0.03)
-            kw = math.ceil(kva * 0.05)
 
-            # ------Label for  cal_opt_val-----------#
-            lab_1 = tk.Label(frame, bg="white")
-            lab_1.config(text="Primary / Secondary = " + str(cal_opt_val) + "\t\t\t\t", bg="white")
-            lab_1.place(x=20, y=300)
+            if value_1 and value_2 >= 0:
 
-            # ---------------LAbel for kVA---------------#
-            lab_2 = tk.Label(frame, bg="white")
-            lab_2.config(text="kVA = " + str(kva) + "\t\t\t\t", bg="white")
-            lab_2.place(x=20, y=320)
+                third_column = [row[2] for row in self.data_1[1:]]  # Extract the third column values
 
-            # ----------------Label for kVAr-------------#
-            lab_3 = tk.Label(frame, bg="white")
-            lab_3.config(text="Primary / Secondary = " + str(kvar) + "\t\t\t\t", bg="white")
-            lab_3.place(x=20, y=340)
+                for i in range(len(third_column)):
+                    data_val = third_column[i]  # Get the value from the third column of data_1
 
-            # ---------------Label for kW----------------#
-            lab_4 = tk.Label(frame, bg="white")
-            lab_4.config(text="kW = " + str(kw) + "\t\t\t\t", bg="white")
-            lab_4.place(x=20, y=360)
+                    if data_val < cal_opt_val:
+                        self.condition_1()
+                        break  # Stop looping if condition_1 is triggered
+                    else:
+                        self.condition_2()
 
-            if all(row[2] > cal_opt_val for row in data_1):
-                switch_condition(data_2, columns_cond_2, 0, kw)
             else:
-                switch_condition(data_1, columns_cond_1, cal_opt_val, 0)
+                messagebox.showinfo('Error!', "Kindly enter the Positive integers!!!")
+
         except ValueError:
-            lab_5 = tk.Label(frame, text="Kindly Enter both two values", bg="red", fg="white")
-            lab_5.pack(anchor=tk.W, padx=20, pady=5, fill=tk.X, after=lab_4)
-            root.after(3000, lab_5.destroy)
+            messagebox.showinfo("Error!", "Kindly Enter the Both Values!!!")
 
-    def switch_condition(data, columns, cal_opt_val=0, kw=0):
-        tree.delete(*tree.get_children())
-        populate_treeview(tree, columns, data, cal_opt_val, kw)
+    def condition_1(self):
+        value_1 = float(self.primary_entry.get())
+        value_2 = float(self.secondary_entry.get())
+        cal_opt_val = round(value_1 / value_2)
 
-    def populate_treeview(tree, columns, data, cal_opt_val=0, kw=0):
-        tree["columns"] = columns
-        tree.heading("#0", text="Index", anchor=tk.CENTER)
+        self.kva = math.floor(1.732 * 415.0 * (value_1 / 1000))
+        self.kvar = math.ceil(self.kva * 0.03)
+        self.kw = math.ceil(self.kva * 0.05)
 
-        for col in columns:
-            tree.heading(col, text=col, anchor=tk.CENTER)
-            tree.column(col, anchor=tk.CENTER)
+        # Update the "Condition" column in self.data_1
+        for row in self.data_1[1:]:
+            third_column = [row[2] for row in self.data_1[1:]]  # Extract the third column values
 
-        for i, row in enumerate(data, start=1):
-            if columns == columns_cond_1:
-                tree.insert("", "end", iid=i, text=str(i), values=(row[0], row[1], row[2], math.ceil(row[2] / cal_opt_val)))
+            for i in range(len(third_column)):
+                data_val = third_column[i]  # Get the value from the third column of data_1
+
+                if data_val < cal_opt_val:
+                    row[3] = "Condition - 1"
+                    row[4] = self.kva
+                    row[5] = self.kvar
+                    row[6] = self.kw
+                    break  # Stop looping if condition_1 is triggered
+                else:
+                    self.condition_2()
+                    row[3] = "Condition - 2"
+                    row[4] = self.kva
+                    row[5] = self.kvar
+                    row[6] = self.kw
+
+        # Clear previous labels in frame_2
+        for widget in self.frame_2.winfo_children():
+            widget.destroy()
+
+        # Create Table using ttk.Labels
+        for x in range(self.rows):
+            for y in range(self.columns):
+                ttk.Label(self.frame_2, text=self.data_1[x][y], width=20, anchor="center", borderwidth=1,relief="solid", font=("Arial", 15)).grid(row=x, column=y, padx=0, pady=0, sticky="nsew" )
+                # Configure grid to center the label
+                self.frame_2.grid_columnconfigure(y, weight=1)
+                self.frame_2.grid_rowconfigure(x, weight=1)
+
+
+        tk.Button(self.frame_3, text="Print", command=self.export_pdf_condition_1, font=("Arial", 12, "bold")).place(relx=0.5, rely=0.5, anchor=NW)
+
+    def condition_2(self):
+        value_1 = float(self.primary_entry.get())
+        value_2 = float(self.secondary_entry.get())
+        cal_opt_val = round(value_1 / value_2)
+        self.kva = math.floor(1.732 * 415.0 * (value_1 / 1000))
+        self.kw = math.ceil(self.kva * 0.05)
+        self.condition = "Condition - 2"
+
+        for row in self.data_2[1:]:
+            if row[2] < cal_opt_val:
+                row[3] = "Condition - 1"
             else:
-                tree.insert("", "end", iid=i, text=str(i), values=(row[0], row[1], row[2], math.ceil(kw / math.ceil(row[2]))))
+                row[3] = "Condition - 2"
 
-    # Create the Tkinter window
+        # Clear previous labels in frame_2
+        for widget in self.frame_2.winfo_children():
+            widget.destroy()
+
+        # Create Table using ttk.Labels
+        for x in range(self.rows):
+            for y in range(len(self.data_2[x])):  # Use len(self.data_2[x]) to get the correct number of columns
+                ttk.Label(self.frame_2, text=self.data_2[x][y], width=20, anchor="center", borderwidth=1,relief="solid", font=("Arial", 15)).grid(row=x, column=y, padx=0, pady=0, sticky="nsew" )
+                # Configure grid to center the label
+                self.frame_2.grid_columnconfigure(y, weight=1)
+                self.frame_2.grid_rowconfigure(x, weight=1)
+        tk.Button(self.frame_3, text="Print", command=self.export_pdf_condition_2, font=("Arial", 12, "bold")).place(relx=0.5, rely=0.5, anchor=NW)
+
+    def header(self, canvas, doc):
+        canvas.saveState()
+        canvas.drawImage('test.png', 40, 770, width=100, height=50)
+        canvas.restoreState()
+
+    def export_pdf_condition_1(self):
+        timestamp = datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
+        pdf_filename = f'{timestamp}.pdf'
+        pdf_filename.set_line_width(1)
+        pdf_filename.rect(pdf_filename.get_x(), pdf_filename.get_y(), pdf_filename.w - 2 * pdf_filename.l_margin, pdf_filename.font_size + 10)
+
+        # Create a custom header with the image
+        doc = BaseDocTemplate(pdf_filename, pagesize=A4)
+        header_frame = Frame(doc.leftMargin, doc.topMargin, doc.width, doc.height)
+        header_template = PageTemplate(id='header_template', frames=[header_frame], onPage=self.header)
+        doc.addPageTemplates([header_template])
+
+        # Define paragraph styles
+        title_style = ParagraphStyle(name='TitleStyle', fontSize=14, textColor=colors.black, leading=16)
+        body_style = ParagraphStyle(name='BodyStyle', fontSize=12, textColor=colors.black, leading=14)
+
+        # Create content about True Power Factor
+        content = []
+        content.append(Paragraph("True Power Factor:", title_style))
+        content.append(Paragraph(
+            "The true power factor is a measure of how efficiently electrical power is being used. "
+            "It represents the ratio of true power (measured in watts) to apparent power (measured in volt-amperes)."
+            " A higher true power factor indicates better utilization of electrical power.", body_style))
+
+        content.append(Spacer(1, 14))
+
+        # Assuming data_1 is defined elsewhere
+        data = [["Id", "Panel Rating", "Optimal CT Ratio", "Condition", "kVA", "kVAr", "kW"]]
+
+        data.extend([item[:4] + [item[4], item[5], item[6]] for item in self.data_1[1:]])
+
+        t = Table(data,repeatRows=1)
+        t.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                               ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                               ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                               ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                               ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                               ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                               ('GRID', (0, 0), (-1, -1), 1, colors.black)]))
+
+        # Add the content about True Power Factor and the table to the PDF elements
+        elements = content + [t]
+
+        # Build the PDF document
+        doc.build(elements)
+
+        messagebox.showinfo("Done", "PDF file exported Successfully!!!")
+
+    def export_pdf_condition_2(self):
+        timestamp = datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
+        pdf_filename = f'{timestamp}.pdf'
+
+        # Create a custom header with the image
+        doc = BaseDocTemplate(pdf_filename, pagesize=A4)
+        header_frame = Frame(doc.leftMargin, doc.topMargin, doc.width, doc.height)
+        header_template = PageTemplate(id='header_template', frames=[header_frame], onPage=self.header)
+        doc.addPageTemplates([header_template])
+
+        # Define paragraph styles
+        title_style = ParagraphStyle(name='TitleStyle', fontSize=14, textColor=colors.black, leading=16)
+        body_style = ParagraphStyle(name='BodyStyle', fontSize=12, textColor=colors.black, leading=14)
+
+        # Create content about True Power Factor
+        content = []
+        content.append(Paragraph("True Power Factor:", title_style))
+        content.append(Paragraph(
+            "The true power factor is a measure of how efficiently electrical power is being used. "
+            "It represents the ratio of true power (measured in watts) to apparent power (measured in volt-amperes)."
+            " A higher true power factor indicates better utilization of electrical power.", body_style))
+
+        content.append(Spacer(1, 14))
+
+        data = [["Id", "Panel Rating", "Optimal CT Ratio", "Condition", "Optimal kW"]]
+        data.extend([item[:4] + [item[4]] for item in self.data_2[1:]])
+
+        t = Table(data, repeatRows=1)
+        t.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                               ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                               ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                               ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                               ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                               ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                               ('GRID', (0, 0), (-1, -1), 1, colors.black)]))
+
+        elements = content + [t]
+
+        # Build the PDF document
+        doc.build(elements)
+
+        messagebox.showinfo("Done", "PDF file exported Successfully!!!")
+
+if __name__ == "__main__":
     root = tk.Tk()
-    root.title("True_Power_Factor")
-    root.geometry("800x800")
-
-    # Create a frame for the Treeview and scrollbars
-    frame = tk.Frame(root, bg="Grey")
-    frame.pack(fill=tk.BOTH, expand=True)
-
-    # Create a Treeview widget
-    tree = ttk.Treeview(frame, show="headings", height=12)
-    tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
-    # Define columns for Condition 1 and Condition 2
-    columns_cond_1 = ["S.No", "Panel Rating", "Optimal CT ratio", "No. of Panel required"]
-    columns_cond_2 = ["S.No", "Panel Rating", "Optimal kW", "No. of Panel required"]
-
-    # Labels, entries, and button
-    tk.Label(root, text="Enter the Primary value").pack()
-    primary = tk.Entry(root)
-    primary.pack()
-    tk.Label(root, text="Enter the Secondary value").pack()
-    secondary = tk.Entry(root)
-    secondary.pack()
-
-    tk.Button(root, text="Submit", command=submit).pack()
+    app = TruePowerFactorApp(root)
 
     root.mainloop()
-true_pf()
