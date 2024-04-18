@@ -32,7 +32,7 @@ class TruePowerFactorApp:
 
         self.data_2 = [
             ["ID", "Panel Rating", "Optimal CT Ratio", "Condition","Optimal kW"],
-            [1, "630A ASTRA - B3", 1252,"",255],
+            [1, "630A ASTRA - B3", 1252,"",225],
             [2, "630A ASTRA - B5", 1809,"", 325],
             [3, "630A ASTRA - B10", 2782,"", 500],
             [4, "315A ASTRA - B3", 835, "",150],
@@ -133,10 +133,13 @@ class TruePowerFactorApp:
         # Create Table using ttk.Labels
         for x in range(self.rows):
             for y in range(self.columns):
-                ttk.Label(self.frame_2, text=self.data_1[x][y], width=20, anchor="center", borderwidth=1,relief="solid", font=("Arial", 15)).grid(row=x, column=y, padx=0, pady=0, sticky="nsew" )
+                font_style = ("Arial", 15, "bold") if x == 0 else ("Arial", 15)
+                ttk.Label(self.frame_2, text=self.data_1[x][y], width=20, anchor="center", borderwidth=1,relief="solid",font= font_style).grid(row=x, column=y, padx=0, pady=0, sticky="nsew")
                 # Configure grid to center the label
                 self.frame_2.grid_columnconfigure(y, weight=1)
                 self.frame_2.grid_rowconfigure(x, weight=1)
+                # Create and grid the label with the appropriate font style
+                #ttk.Label(self.frame_2, text=self.data_1[x][y], width=20, anchor="center", borderwidth=1, relief="solid",font=("Arial", 15, "bold")).grid(row=x, column=y, padx=0, pady=0, sticky="nsew")
 
 
         tk.Button(self.frame_3, text="Print", command=self.export_pdf_condition_1, font=("Arial", 12, "bold")).place(relx=0.5, rely=0.5, anchor=NW)
@@ -150,10 +153,7 @@ class TruePowerFactorApp:
         self.condition = "Condition - 2"
 
         for row in self.data_2[1:]:
-            if row[2] < cal_opt_val:
-                row[3] = "Condition - 1"
-            else:
-                row[3] = "Condition - 2"
+            row[3] = "Condition - 2"
 
         # Clear previous labels in frame_2
         for widget in self.frame_2.winfo_children():
@@ -162,7 +162,8 @@ class TruePowerFactorApp:
         # Create Table using ttk.Labels
         for x in range(self.rows):
             for y in range(len(self.data_2[x])):  # Use len(self.data_2[x]) to get the correct number of columns
-                ttk.Label(self.frame_2, text=self.data_2[x][y], width=20, anchor="center", borderwidth=1,relief="solid", font=("Arial", 15)).grid(row=x, column=y, padx=0, pady=0, sticky="nsew" )
+                font_style = ("Arial", 15, "bold") if x == 0 else ("Arial", 15)
+                ttk.Label(self.frame_2, text=self.data_2[x][y], width=20, anchor="center", borderwidth=1,relief="solid", font=font_style).grid(row=x, column=y, padx=0, pady=0, sticky="nsew" )
                 # Configure grid to center the label
                 self.frame_2.grid_columnconfigure(y, weight=1)
                 self.frame_2.grid_rowconfigure(x, weight=1)
@@ -173,16 +174,28 @@ class TruePowerFactorApp:
         canvas.drawImage('test.png', 40, 770, width=100, height=50)
         canvas.restoreState()
 
+    import datetime
+    from reportlab.lib.styles import ParagraphStyle
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib import colors
+    from reportlab.platypus import BaseDocTemplate, Frame, Paragraph, PageTemplate, Spacer, Table, TableStyle
+
     def export_pdf_condition_1(self):
+        # Generate a timestamp for the PDF filename
         timestamp = datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
         pdf_filename = f'{timestamp}.pdf'
-        pdf_filename.set_line_width(1)
-        pdf_filename.rect(pdf_filename.get_x(), pdf_filename.get_y(), pdf_filename.w - 2 * pdf_filename.l_margin, pdf_filename.font_size + 10)
 
         # Create a custom header with the image
+        def header(canvas, doc):
+            canvas.saveState()
+            canvas.setFont('Helvetica-Bold', 12)
+            canvas.drawString(40, doc.height + doc.topMargin - 20, "My Custom Header")
+            canvas.restoreState()
+
         doc = BaseDocTemplate(pdf_filename, pagesize=A4)
-        header_frame = Frame(doc.leftMargin, doc.topMargin, doc.width, doc.height)
-        header_template = PageTemplate(id='header_template', frames=[header_frame], onPage=self.header)
+        header_frame = Frame(doc.leftMargin, doc.height + doc.topMargin - 40, doc.width, 40)
+        header_template = PageTemplate(id='header_template', frames=[header_frame],
+                                       onPage=lambda canvas, doc, content=None: header(canvas, doc))
         doc.addPageTemplates([header_template])
 
         # Define paragraph styles
@@ -204,7 +217,7 @@ class TruePowerFactorApp:
 
         data.extend([item[:4] + [item[4], item[5], item[6]] for item in self.data_1[1:]])
 
-        t = Table(data,repeatRows=1)
+        t = Table(data, repeatRows=1)
         t.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.grey),
                                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
                                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
