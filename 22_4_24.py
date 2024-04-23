@@ -3,11 +3,13 @@ import tkinter as tk
 from reportlab.lib.pagesizes import A4
 from reportlab.platypus import Table, TableStyle, Spacer, Paragraph
 from reportlab.lib import colors
-import datetime
 from reportlab.platypus import BaseDocTemplate, PageTemplate, Frame
 from reportlab.lib.styles import ParagraphStyle
 from tkinter import messagebox, NW
 import math
+from reportlab.lib.units import inch
+import datetime
+
 
 class TruePowerFactorApp:
     def __init__(self, root):
@@ -83,7 +85,6 @@ class TruePowerFactorApp:
                 row[3:7] = "Condition - 1", kva, kvar, kw,"-"
             else:
                 row[3:7] = "Condition - 2", "-", "-", "-", row[7]
-                #optimal_kw_value = row[7]  # Fetch the 8th column value from self.data_1
 
         # Clear previous labels in frame_2
         for widget in self.frame_2.winfo_children():
@@ -93,15 +94,19 @@ class TruePowerFactorApp:
         for x in range(self.rows):
             for y in range(self.columns):
                 font_style = ("Arial", 15, "bold") if x == 0 else ("Arial", 15)
-                tk.Label(self.frame_2, text=self.data_2[x][y], width=20, anchor="center", borderwidth=1, relief="solid",
-                         font=font_style).grid(row=x, column=y, padx=0, pady=0, sticky="nsew")
-
+                tk.Label(self.frame_2, text=self.data_2[x][y], width=20, anchor="center", borderwidth=1, relief="solid", font=font_style).grid(row=x, column=y, padx=0, pady=0, sticky="nsew")
         tk.Button(self.frame_3, text="Print", command=self.export_pdf_condition_1, font=("Arial", 12, "bold")).place(relx=0.5, rely=0.5, anchor=NW)
 
     def header(self, canvas, doc):
         canvas.saveState()
         canvas.drawImage('test.png', 40, 770, width=100, height=50)
         canvas.restoreState()
+        # Add date and time to the header
+        now = timestamp = datetime.datetime.now().strftime("%d/%m/%Y")
+        header_style = ParagraphStyle(name='HeaderStyle', fontSize=12, textColor='black')
+        header_text = Paragraph(f"{now}", header_style)
+        header_text.wrapOn(canvas, inch, inch)
+        header_text.drawOn(canvas, 500, 800)
 
     def export_pdf_condition_1(self):
         timestamp = datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
@@ -119,22 +124,33 @@ class TruePowerFactorApp:
 
         # Create content about True Power Factor
         content = []
+        content.append(Spacer(1, 20))
+
         content.append(Paragraph("True Power Factor:", title_style))
+        content.append(Spacer(1, 10))
         content.append(Paragraph(
             "The true power factor is a measure of how efficiently electrical power is being used. "
             "It represents the ratio of true power (measured in watts) to apparent power (measured in volt-amperes)."
             " A higher true power factor indicates better utilization of electrical power.", body_style))
 
-        content.append(Spacer(1, 40))
+        content.append(Spacer(1, 20))
 
-        data = [["Id", "Panel Rating", "Optimal CT Ratio", "Condition", "kVA", "kVAr", "kW", "Optimal kW"]]
+        # Create the Paragraph with the bold "Primary value :" text
+        primary_value_paragraph = Paragraph('Primary value : {}'.format(self.primary_entry.get()), body_style)
+        secondary_value_paragraph = Paragraph("Secondary value : {}".format(self.secondary_entry.get()), body_style)
+        content.append(primary_value_paragraph)
+        content.append(secondary_value_paragraph)
+
+        content.append(Spacer(1, 20))
+
+        data = [["ID", "Panel Rating", "Optimal CT Ratio", "Condition", "kVA", "kVAr", "kW", "Optimal kW"]]
 
         data.extend([item[:4] + [item[4], item[5], item[6], item[7]] for item in self.data_2[1:]])
 
         t = Table(data, repeatRows=1)
         t.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.grey), ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
                                ('ALIGN', (0, 0), (-1, -1), 'CENTER'), ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                               ('BOTTOMPADDING', (0, 0), (-1, 0), 12), ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                               ('BOTTOMPADDING', (0, -1), (-1, 0), 20), ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
                                ('GRID', (0, 0), (-1, -1), 1, colors.black)]))
 
         elements = content + [t]
