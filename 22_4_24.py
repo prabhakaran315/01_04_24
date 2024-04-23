@@ -6,15 +6,16 @@ from reportlab.lib import colors
 import datetime
 from reportlab.platypus import BaseDocTemplate, PageTemplate, Frame
 from reportlab.lib.styles import ParagraphStyle
-from tkinter import messagebox, ttk, NW
+from tkinter import messagebox, NW
 import math
 
 class TruePowerFactorApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Project")
-
         self.create_widgets()
+
+        #------------Creating the Data-------------------#
         self.data_1 = [
             ["ID", "Panel Rating", "Optimal CT Ratio", "Condition", "kVA", "kVAr", "kW", "Optimal kW"],
             [1, "630A ASTRA - B3", 1252, "", "", "", "", 225],
@@ -74,35 +75,29 @@ class TruePowerFactorApp:
         kvar = math.ceil(kva * 0.03)
         kw = math.ceil(kva * 0.05)
 
-        # Update the "Condition" column in self.data_1 and clear appropriate columns
-        for row in self.data_1[1:]:
-            data_val = row[2]  # Get the value from the third column of data_1
-            print(row[7])
-            #print("row[7] : ", row[7])
+        self.data_2 = [row[:] for row in self.data_1]
+        # Update the "Condition" column in self.data_2 and clear appropriate columns
+        for row in self.data_2[1:]:
+            data_val = row[2]  # Get the value from the third column of data_2
             if data_val < cal_opt_val:
-                #print("Condition_1")
                 row[3] = "Condition - 1"
                 row[4:7] = kva, kvar, kw
                 row[7] = "-"
             else:
-                #print("Condition_2 ")
                 row[3] = "Condition - 2"
                 row[4:7] = "-", "-", "-"
-
+                optimal_kw_value = row[7]  # Fetch the 8th column value from self.data_1
 
         # Clear previous labels in frame_2
         for widget in self.frame_2.winfo_children():
             widget.destroy()
 
-        # Create Table using tkinter Labels
+        # Create Table using tkinter Labels using self.data_2 (updated data)
         for x in range(self.rows):
             for y in range(self.columns):
                 font_style = ("Arial", 15, "bold") if x == 0 else ("Arial", 15)
-                tk.Label(self.frame_2, text=self.data_1[x][y], width=20, anchor="center", borderwidth=1, relief="solid",
+                tk.Label(self.frame_2, text=self.data_2[x][y], width=20, anchor="center", borderwidth=1, relief="solid",
                          font=font_style).grid(row=x, column=y, padx=0, pady=0, sticky="nsew")
-
-        # Choose the PDF export method based on the condition
-        #export_method = self.export_pdf_condition_1 if cal_opt_val < 10 else self.export_pdf_condition_2
 
         tk.Button(self.frame_3, text="Print", command=self.export_pdf_condition_1, font=("Arial", 12, "bold")).place(relx=0.5, rely=0.5, anchor=NW)
 
@@ -122,7 +117,7 @@ class TruePowerFactorApp:
         doc.addPageTemplates([header_template])
 
         # Define paragraph styles
-        title_style = ParagraphStyle(name='TitleStyle', fontSize=14, textColor=colors.black, leading=16)
+        title_style = ParagraphStyle(name='TitleStyle', fontSize=14, textColor=colors.black, leading=15)
         body_style = ParagraphStyle(name='BodyStyle', fontSize=12, textColor=colors.black, leading=14)
 
         # Create content about True Power Factor
@@ -137,7 +132,7 @@ class TruePowerFactorApp:
 
         data = [["Id", "Panel Rating", "Optimal CT Ratio", "Condition", "kVA", "kVAr", "kW", "Optimal kW"]]
 
-        data.extend([item[:4] + [item[4], item[5], item[6], item[7]] for item in self.data_1[1:]])
+        data.extend([item[:4] + [item[4], item[5], item[6], item[7]] for item in self.data_2[1:]])
 
         t = Table(data, repeatRows=1)
         t.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.grey), ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
@@ -155,5 +150,4 @@ class TruePowerFactorApp:
 if __name__ == "__main__":
     root = tk.Tk()
     app = TruePowerFactorApp(root)
-
     root.mainloop()
