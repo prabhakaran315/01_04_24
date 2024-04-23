@@ -80,13 +80,10 @@ class TruePowerFactorApp:
         for row in self.data_2[1:]:
             data_val = row[2]  # Get the value from the third column of data_2
             if data_val < cal_opt_val:
-                row[3] = "Condition - 1"
-                row[4:7] = kva, kvar, kw
-                row[7] = "-"
+                row[3:7] = "Condition - 1", kva, kvar, kw,"-"
             else:
-                row[3] = "Condition - 2"
-                row[4:7] = "-", "-", "-"
-                optimal_kw_value = row[7]  # Fetch the 8th column value from self.data_1
+                row[3:7] = "Condition - 2", "-", "-", "-", row[7]
+                #optimal_kw_value = row[7]  # Fetch the 8th column value from self.data_1
 
         # Clear previous labels in frame_2
         for widget in self.frame_2.winfo_children():
