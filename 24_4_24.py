@@ -116,12 +116,13 @@ class TruePowerFactorApp:
                          font=font_style).grid(row=x, column=y, padx=0, pady=0, sticky="nsew")
         column = [str(row[5]) for row in self.data_2]
         sort_column = sorted(column)
+
         first = sort_column[:3]
         self.first_three = []
 
         for row_1 in self.data_2:
             if str (row_1[5]) in first:
-                self.first_three.append((row_1[0], row_1[1]))
+                self.first_three.append((row_1[0], row_1[1], row_1[5]))
 
         # Display low, medium, high values in separate table format
         table_frame = tk.Frame(self.frame_2, bg="white")
@@ -133,6 +134,7 @@ class TruePowerFactorApp:
         # Labels for the table headers
         tk.Label(table_frame, text="Panel ID ", font=("Arial", 14, "bold"), bg = "White").grid(row=1, column=0, padx=5, pady=5)
         tk.Label(table_frame, text="Panel Rating", font=("Arial", 14, "bold"), bg = "White").grid(row=1, column=1, padx=5, pady=5)
+        tk.Label(table_frame, text="Minimum kW", font=("Arial", 14, "bold"), bg = "White").grid(row=1, column=2, padx=5, pady=5)
 
         # Display low, medium, high values in the table format
         row_index = 2
@@ -140,25 +142,22 @@ class TruePowerFactorApp:
         for i in range(3):
             panel_id = self.first_three[i][0]
             panel_rating = self.first_three[i][1]
-            self.pan_rat = (panel_id, panel_rating)
+            panel_kw = self.first_three[i][2]  # Corrected index from 5 to 2
+            self.pan_rat = (panel_id, panel_rating, panel_kw)
 
             print("Condition -1 :", self.pan_rat)
 
             # Unpack pan_rat and create labels in the table_frame
-            category, data = self.pan_rat
-            tk.Label(table_frame, text=category, font=("Arial", 14), bg = "White").grid(row=row_index, column=0, padx=5, pady=5)
-            tk.Label(table_frame, text=str(data), font=("Arial", 14), bg = "White").grid(row=row_index, column=1, padx=5, pady=5)
+            category, data, data_1 = self.pan_rat
+
+            tk.Label(table_frame, text=category, font=("Arial", 14), bg="White").grid(row=row_index, column=0, padx=5, pady=5)
+            tk.Label(table_frame, text=str(data), font=("Arial", 14), bg="White").grid(row=row_index, column=1, padx=5, pady=5)
+            tk.Label(table_frame, text=str(data_1), font=("Arial", 14), bg="White").grid(row=row_index, column=2, padx=5, pady=5)
             row_index += 1
         self.hello = tk.IntVar()
-        check_button = tk.Checkbutton(
-            self.frame_3,
-            text=" If you want to print suggestion panel rating!!!",
-            variable=self.hello,
-            onvalue=1,
-            offvalue=0,
-            bg = "Grey",
-            font=("Arial", 15)
-        )
+        check_button = tk.Checkbutton(self.frame_3, text=" If you want to print suggestion panel rating!!!", variable=self.hello,
+            onvalue=1, offvalue=0, bg = "Grey", font=("Arial", 15))
+
         check_button.place(relx=0.42, rely=0, anchor=tk.NW)
         tk.Button(self.frame_3, text="Print", command=self.export_pdf_condition_1, font=("Arial", 15, "bold")).place(relx=0.5, rely=0.5, anchor=tk.NW)
 
@@ -243,11 +242,12 @@ class TruePowerFactorApp:
                     ]
                 elements.extend(content_1)
 
-                table_data = [["Panel ID", "Panel Rating"]]
+                table_data = [["Panel ID", "Panel Rating", "Minimum kW"]]
                 for i in range(3):
                     panel_id = self.first_three[i][0]
                     panel_rating = self.first_three[i][1]
-                    self.pan_rat = (panel_id, panel_rating)
+                    panel_kw = self.first_three[i][2]
+                    self.pan_rat = (panel_id, panel_rating, panel_kw)
 
                     for row in [self.pan_rat]:
                         print("DEBUG: Processing row:", row)  # Print each row to see which rows are being processed
