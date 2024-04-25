@@ -1,15 +1,14 @@
 #----------------Importing the required libraries----------------#
 import tkinter as tk
 from reportlab.lib.pagesizes import A4
-from reportlab.platypus import Table, TableStyle, Spacer, Paragraph, SimpleDocTemplate
+from reportlab.platypus import Table, TableStyle, Spacer, Paragraph
 from reportlab.lib import colors
 from reportlab.platypus import BaseDocTemplate, PageTemplate, Frame
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
-from tkinter import messagebox, NW
+from tkinter import messagebox
 import math
 from reportlab.lib.units import inch
 import datetime
-
 
 class TruePowerFactorApp:
     def __init__(self, root):
@@ -114,22 +113,33 @@ class TruePowerFactorApp:
                 font_style = ("Arial", 15, "bold") if x == 0 else ("Arial", 15)
                 tk.Label(self.frame_2, text=self.data_2[x][y], width=20, anchor="center", borderwidth=1, relief="solid",
                          font=font_style).grid(row=x, column=y, padx=0, pady=0, sticky="nsew")
-        column = [str(row[5]) for row in self.data_2]
+        '''column = [str(row[5]) for row in self.data_2]
         sort_column = sorted(column)
+        print("Sorted values :", sort_column)
 
         first = sort_column[:3]
-        self.first_three = []
+        self.first_three = []'''
 
-        for row_1 in self.data_2:
-            if str (row_1[5]) in first:
-                self.first_three.append((row_1[0], row_1[1], row_1[5]))
+        self.first_three = []  # Initialize an empty list to store the filtered elements
+
+        # Sort self.data_2 based on the 6th element
+        sort_column = sorted(self.data_2, key=lambda x: str(x[5]))
+
+        # Get the first three sorted elements
+        first = sort_column[:3]
+        # Iterate through sort_column and append elements to self.first_three if they meet the condition
+        for row in sort_column:
+            if str(row[5]) in [str(item[5]) for item in first]:  # Check if the 6th element is in the first three sorted elements
+                self.first_three.append((row[0], row[1], row[5]))
+        # Print the filtered elements
+        print(self.first_three)
 
         # Display low, medium, high values in separate table format
         table_frame = tk.Frame(self.frame_2, bg="white")
         table_frame.grid(row=self.rows + 1, column=0, columnspan=3, pady=10)
 
         # Table heading
-        tk.Label(table_frame, text="Optimal Panel Rating Based on Optimum kW", font=("Arial", 16), bg = "White").grid(row=0,column=0, columnspan=2, padx=5, pady=5)
+        tk.Label(table_frame, text="Optimal Panel Rating Based on Optimum kW", font=("Arial", 16, "bold"), bg = "White").grid(row=0,column=0, columnspan=5, padx=9, pady=5)
 
         # Labels for the table headers
         tk.Label(table_frame, text="Panel ID ", font=("Arial", 14, "bold"), bg = "White").grid(row=1, column=0, padx=5, pady=5)
@@ -139,13 +149,13 @@ class TruePowerFactorApp:
         # Display low, medium, high values in the table format
         row_index = 2
 
-        for i in range(3):
+        for i in range(min(3, len(self.first_three))):
             panel_id = self.first_three[i][0]
             panel_rating = self.first_three[i][1]
             panel_kw = self.first_three[i][2]  # Corrected index from 5 to 2
             self.pan_rat = (panel_id, panel_rating, panel_kw)
 
-            print("Condition -1 :", self.pan_rat)
+            #print("Condition -1 :", self.pan_rat)
 
             # Unpack pan_rat and create labels in the table_frame
             category, data, data_1 = self.pan_rat
@@ -155,10 +165,8 @@ class TruePowerFactorApp:
             tk.Label(table_frame, text=str(data_1), font=("Arial", 14), bg="White").grid(row=row_index, column=2, padx=5, pady=5)
             row_index += 1
         self.hello = tk.IntVar()
-        check_button = tk.Checkbutton(self.frame_3, text=" If you want to print suggestion panel rating!!!", variable=self.hello,
-            onvalue=1, offvalue=0, bg = "Grey", font=("Arial", 15))
-
-        check_button.place(relx=0.42, rely=0, anchor=tk.NW)
+        tk.Checkbutton(self.frame_3, text="", variable=self.hello, onvalue=1, offvalue=0, bg = "Grey").place(relx=0.42, rely=0.22, anchor=tk.NW)
+        tk.Label(self.frame_3, text = ' If you want to print suggestion panel rating!!!', bg="Grey", fg = "White", font = ("Arial", 14)).place(relx=0.43, rely=0.2, anchor=tk.NW)
         tk.Button(self.frame_3, text="Print", command=self.export_pdf_condition_1, font=("Arial", 15, "bold")).place(relx=0.5, rely=0.5, anchor=tk.NW)
 
     def header(self, canvas, doc):
@@ -250,9 +258,9 @@ class TruePowerFactorApp:
                     self.pan_rat = (panel_id, panel_rating, panel_kw)
 
                     for row in [self.pan_rat]:
-                        print("DEBUG: Processing row:", row)  # Print each row to see which rows are being processed
+                        #print("DEBUG: Processing row:", row)  # Print each row to see which rows are being processed
                         table_data.append(list(row))  # Append the row to table_data
-                        print("DEBUG: Updated table_data:", table_data)  # Print table_data after each iteration
+                        #print("DEBUG: Updated table_data:", table_data)  # Print table_data after each iteration
                     # Append lists, not tuples
 
                     # Create the table with the formatted table_data
