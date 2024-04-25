@@ -117,12 +117,12 @@ class TruePowerFactorApp:
         column = [str(row[5]) for row in self.data_2]
         sort_column = sorted(column)
         first = sort_column[:3]
-        first_three = []
+        self.first_three = []
 
 
         for row_1 in self.data_2:
             if str (row_1[5]) in first:
-                first_three.append((row_1[0], row_1[1]))
+                self.first_three.append((row_1[0], row_1[1]))
 
         # Display low, medium, high values in separate table format
         table_frame = tk.Frame(self.frame_2, bg="white")
@@ -139,9 +139,11 @@ class TruePowerFactorApp:
         row_index = 2
 
         for i in range(3):
-            panel_id = first_three[i][0]
-            panel_rating = first_three[i][1]
-            self.pan_rat = panel_id, panel_rating
+            panel_id = self.first_three[i][0]
+            panel_rating = self.first_three[i][1]
+            self.pan_rat = (panel_id, panel_rating)
+
+            print("Condition -1 :", self.pan_rat)
 
             # Unpack pan_rat and create labels in the table_frame
             category, data = self.pan_rat
@@ -221,15 +223,39 @@ class TruePowerFactorApp:
 
         elements = content + [t]
 
-        # Debugging: Print self.pan_rat before constructing the table_data
-        print("Debugging - self.pan_rat:", self.pan_rat)
-
-        # Create the table for Optimal Panel Ratings
+        elements.append(Spacer(1, 25))
+        # Inside the export_pdf_condition_1 method
         try:
-            table_data = [["Panel ID", "Panel Rating"]] + [list(row) for row in self.pan_rat]
-            table = Table(table_data)
-            table.setStyle(TableStyle([('GRID', (0, 0), (-1, -1), 1, colors.black)]))
-            elements.append(table)
+            content_1 = [
+                Paragraph("Optimal Panel Rating Based on Optimum kW", title_style), Spacer(1, 5)
+                ]
+            elements.extend(content_1)
+
+            table_data = [["Panel ID", "Panel Rating"]]
+            for i in range(3):
+                panel_id = self.first_three[i][0]
+                panel_rating = self.first_three[i][1]
+                self.pan_rat = (panel_id, panel_rating)
+
+                for row in [self.pan_rat]:
+                    print("DEBUG: Processing row:", row)  # Print each row to see which rows are being processed
+                    table_data.append(list(row))  # Append the row to table_data
+                    print("DEBUG: Updated table_data:", table_data)  # Print table_data after each iteration
+                # Append lists, not tuples
+
+                # Create the table with the formatted table_data
+            table = Table(table_data, repeatRows=1)
+            table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('BOTTOMPADDING', (0, -1), (-1, 0), 20),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black)]
+            ))
+            elements.append(table)  # Append the table to elements only once
+
         except Exception as e:
             print("Error:", e)
 
