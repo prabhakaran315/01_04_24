@@ -119,7 +119,6 @@ class TruePowerFactorApp:
         first = sort_column[:3]
         self.first_three = []
 
-
         for row_1 in self.data_2:
             if str (row_1[5]) in first:
                 self.first_three.append((row_1[0], row_1[1]))
@@ -129,11 +128,11 @@ class TruePowerFactorApp:
         table_frame.grid(row=self.rows + 1, column=0, columnspan=3, pady=10)
 
         # Table heading
-        tk.Label(table_frame, text="Optimal Panel Rating Based on Optimum kW", font=("Arial", 16, "bold"), width = 60, anchor="center", borderwidth=1, relief="solid").grid(row=0,column=0, columnspan=2, padx=5, pady=5)
+        tk.Label(table_frame, text="Optimal Panel Rating Based on Optimum kW", font=("Arial", 16), bg = "White").grid(row=0,column=0, columnspan=2, padx=5, pady=5)
 
         # Labels for the table headers
-        tk.Label(table_frame, text="Panel ID ", font=("Arial", 14, "bold"),width = 30,  anchor="center", borderwidth=1, relief="solid").grid(row=1, column=0, padx=5, pady=5)
-        tk.Label(table_frame, text="Panel Rating", font=("Arial", 14, "bold"),width = 30,  anchor="center", borderwidth=1, relief="solid").grid(row=1, column=1, padx=5, pady=5)
+        tk.Label(table_frame, text="Panel ID ", font=("Arial", 14, "bold"), bg = "White").grid(row=1, column=0, padx=5, pady=5)
+        tk.Label(table_frame, text="Panel Rating", font=("Arial", 14, "bold"), bg = "White").grid(row=1, column=1, padx=5, pady=5)
 
         # Display low, medium, high values in the table format
         row_index = 2
@@ -147,10 +146,20 @@ class TruePowerFactorApp:
 
             # Unpack pan_rat and create labels in the table_frame
             category, data = self.pan_rat
-            tk.Label(table_frame, text=category, font=("Arial", 14), anchor="center", borderwidth=1, relief="solid").grid(row=row_index, column=0, padx=5, pady=5)
-            tk.Label(table_frame, text=str(data), font=("Arial", 14), anchor="center", borderwidth=1, relief="solid").grid(row=row_index, column=1, padx=5, pady=5)
+            tk.Label(table_frame, text=category, font=("Arial", 14), bg = "White").grid(row=row_index, column=0, padx=5, pady=5)
+            tk.Label(table_frame, text=str(data), font=("Arial", 14), bg = "White").grid(row=row_index, column=1, padx=5, pady=5)
             row_index += 1
-
+        self.hello = tk.IntVar()
+        check_button = tk.Checkbutton(
+            self.frame_3,
+            text=" If you want to print suggestion panel rating!!!",
+            variable=self.hello,
+            onvalue=1,
+            offvalue=0,
+            bg = "Grey",
+            font=("Arial", 15)
+        )
+        check_button.place(relx=0.42, rely=0, anchor=tk.NW)
         tk.Button(self.frame_3, text="Print", command=self.export_pdf_condition_1, font=("Arial", 15, "bold")).place(relx=0.5, rely=0.5, anchor=tk.NW)
 
     def header(self, canvas, doc):
@@ -224,44 +233,51 @@ class TruePowerFactorApp:
         elements = content + [t]
 
         elements.append(Spacer(1, 25))
+
+        check_box = self.hello.get()
         # Inside the export_pdf_condition_1 method
-        try:
-            content_1 = [
-                Paragraph("Optimal Panel Rating Based on Optimum kW", title_style), Spacer(1, 5)
-                ]
-            elements.extend(content_1)
+        if check_box == 1:
+            try:
+                content_1 = [
+                    Paragraph("Optimal Panel Rating Based on Optimum kW", title_style), Spacer(1, 5)
+                    ]
+                elements.extend(content_1)
 
-            table_data = [["Panel ID", "Panel Rating"]]
-            for i in range(3):
-                panel_id = self.first_three[i][0]
-                panel_rating = self.first_three[i][1]
-                self.pan_rat = (panel_id, panel_rating)
+                table_data = [["Panel ID", "Panel Rating"]]
+                for i in range(3):
+                    panel_id = self.first_three[i][0]
+                    panel_rating = self.first_three[i][1]
+                    self.pan_rat = (panel_id, panel_rating)
 
-                for row in [self.pan_rat]:
-                    print("DEBUG: Processing row:", row)  # Print each row to see which rows are being processed
-                    table_data.append(list(row))  # Append the row to table_data
-                    print("DEBUG: Updated table_data:", table_data)  # Print table_data after each iteration
-                # Append lists, not tuples
+                    for row in [self.pan_rat]:
+                        print("DEBUG: Processing row:", row)  # Print each row to see which rows are being processed
+                        table_data.append(list(row))  # Append the row to table_data
+                        print("DEBUG: Updated table_data:", table_data)  # Print table_data after each iteration
+                    # Append lists, not tuples
 
-                # Create the table with the formatted table_data
-            table = Table(table_data, repeatRows=1)
-            table.setStyle(TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('BOTTOMPADDING', (0, -1), (-1, 0), 20),
-                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                ('GRID', (0, 0), (-1, -1), 1, colors.black)]
-            ))
-            elements.append(table)  # Append the table to elements only once
+                    # Create the table with the formatted table_data
+                table = Table(table_data, repeatRows=1)
+                table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('BOTTOMPADDING', (0, -1), (-1, 0), 20),
+                    ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black)]
+                ))
+                elements.append(table)  # Append the table to elements only once
 
-        except Exception as e:
-            print("Error:", e)
+            except Exception as e:
+                print("Error:", e)
 
-        # Build the PDF document
-        doc.build(elements)
-        messagebox.showinfo("Done", "PDF file exported Successfully!!!")
+            # Build the PDF document
+            doc.build(elements)
+            messagebox.showinfo("Done", "PDF file exported Successfully!!!")
+
+        else:
+            doc.build(elements)
+            messagebox.showinfo("Done", "PDF file exported Successfully!!!")
 
 if __name__ == "__main__":
     root = tk.Tk()
