@@ -4,13 +4,14 @@ from tkinter import ttk  # Import ttk for Treeview widget
 from openpyxl import load_workbook
 #-----------------------------------------------------------#
 from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 
 from reportlab.platypus import Image as ReportLabImage
 #-------------------------------------------------------------#
-from reportlab.lib.pagesizes import letter
+
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle,  Paragraph, Spacer
-from reportlab.pdfgen import canvas
+
 from reportlab.lib.styles import getSampleStyleSheet
 import datetime
 
@@ -20,8 +21,10 @@ def main_fun():
         pdf_file = f'{timestamp}.pdf'
         doc = SimpleDocTemplate(pdf_file, pagesize=A4, rightMargin=18, leftMargin=18, topMargin=18)
         elements = []
+
         extra_image_path = 'test.png'  # Replace with the actual path to your image
-        extra_img = ReportLabImage(extra_image_path, width=300, height=50)
+
+        extra_img = ReportLabImage(extra_image_path, width=50, height=50)
         elements.append(extra_img)
 
         # text_content for generating pdf
@@ -30,6 +33,8 @@ def main_fun():
             f"Primary Value: {primary.get()}\n"
             f"Secondary Value: {secondary.get()}\n"
             f"Average Value: {result_var.get()}")
+
+
 
         text_paragraph = Paragraph(text_content, getSampleStyleSheet()['BodyText'])
         elements.append(text_paragraph)
@@ -51,9 +56,10 @@ def main_fun():
         table = Table(table_data)
         table.setStyle(table_style)
         elements.append(table)
-        done_lab = Label(root, text = "PDF Generated Successfully!!!").place(x=350, y= 700)
+
         # Build PDF
         doc.build(elements)
+        done_lab = Label(root, text="PDF Generated Successfully!!!").place(x=350, y=700)
 
     def export_to_excel(data):
         df = pd.DataFrame(data, columns=['S.no', 'Power', 'OP', 'CT/R', 'Above / Below', 'KVA', 'kW', 'KVAr'])
@@ -75,16 +81,16 @@ def main_fun():
 
             # Compare 'OP' column with the input value
             df['Comparison'] = df['OP'].apply(
-                lambda x: 'Below' if x > input_value else ('Above' if x < input_value else 'Equal'))
+                lambda x: 'Condition-2' if x > input_value else ('Condition-1' if x < input_value else 'Equal'))
 
             df['KVA'] = df['OP'].apply(
-                lambda x: 'Below' if x > input_value else ('Above' if x < input_value else 'Equal'))
+                lambda x: 'Condition-2' if x > input_value else ('Condition-1' if x < input_value else 'Equal'))
 
             df['kW'] = df['OP'].apply(
-                lambda x: 'Below' if x > input_value else ('Above' if x < input_value else 'Equal'))
+                lambda x: 'Condition-2' if x > input_value else ('Condition-1' if x < input_value else 'Equal'))
 
             df['KVAr'] = df['OP'].apply(
-                lambda x: 'Below' if x > input_value else ('Above' if x < input_value else 'Equal'))
+                lambda x: 'Condition-2' if x > input_value else ('Condition-1' if x < input_value else 'Equal'))
 
             # Save the DataFrame back to Excel with the results in a new column
             output_file = 'output.xlsx'  # Change this to the desired output file path
@@ -148,7 +154,7 @@ def main_fun():
     frame.place(x=10, y=200, width=760, height=500)
 
     # Create a Treeview widget for displaying data in a table
-    treeview = ttk.Treeview(frame, columns=('S.no', 'Power', 'OP', 'CT/R', 'Above / Below', 'KVA', 'kW', 'KVAr'),
+    treeview = ttk.Treeview(frame, columns=('S.no', 'Power', 'OP', 'CT/R', 'Condition', 'KVA', 'kW', 'KVAr'),
                             show='headings')
     treeview.pack(side=LEFT, fill=BOTH, expand=True)
 
@@ -168,7 +174,7 @@ def main_fun():
     treeview.heading('Power', text='Power', anchor='center')
     treeview.heading('OP', text='OP', anchor='center')
     treeview.heading('CT/R', text='CT/R', anchor='center')
-    treeview.heading('Above / Below', text='Above / Below', anchor='center')
+    treeview.heading('Condition', text='Condition', anchor='center')
     treeview.heading('KVA', text='KVA', anchor='center')
     treeview.heading('kW', text='kW', anchor='center')
     treeview.heading('KVAr', text='KVAr', anchor='center')
@@ -179,7 +185,7 @@ def main_fun():
     treeview.column('Power', width=70, anchor='center')
     treeview.column('OP', width=70, anchor='center')
     treeview.column('CT/R', width=70, anchor='center')
-    treeview.column('Above / Below', width=100, anchor='center')
+    treeview.column('Condition', width=100, anchor='center')
     treeview.column('KVA', width=70, anchor='center')
     treeview.column('kW', width=70, anchor='center')
     treeview.column('KVAr', width=70, anchor='center')

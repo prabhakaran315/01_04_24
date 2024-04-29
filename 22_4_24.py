@@ -48,16 +48,16 @@ class TruePowerFactorApp:
         # Labels
         tk.Label(self.frame_1, text="Conditions to Achieve True Power Factor Performance", bg="Grey", fg="White", font=("Arial", 20, "bold")).pack(padx=10, pady=10)
         tk.Label(self.frame_1, text="Enter the Primary value of transformer", bg="Grey", fg="White", font=("Arial", 14)).pack()
-        self.primary_entry = tk.Entry(self.frame_1, font=("Arial", 12))
+        self.primary_entry = tk.Entry(self.frame_1, font=("Arial", 14))
         self.primary_entry.pack()
 
         tk.Label(self.frame_1, text="Enter the Secondary value of transformer", bg="Grey", fg="White", font=("Arial", 14)).pack()
 
-        self.secondary_entry = tk.Entry(self.frame_1, font=("Arial", 12))
+        self.secondary_entry = tk.Entry(self.frame_1, font=("Arial", 14))
         self.secondary_entry.pack()
 
         # Buttons
-        tk.Button(self.frame_1, text="Submit", command=self.submit, font=("Arial", 12, "bold")).pack(padx=10, pady=10)
+        tk.Button(self.frame_1, text="Submit", command=self.submit, font=("Arial", 15, "bold")).pack(padx=10, pady=10)
 
     def submit(self):
         try:
@@ -80,7 +80,7 @@ class TruePowerFactorApp:
         self.data_2 = [row[:] for row in self.data_1]
         # Update the "Condition" column in self.data_2 and clear appropriate columns
         for row in self.data_2[1:]:
-            data_val = row[2]  # Get the value from the third column of data_2
+            data_val = row[2]  # Get the value from the third column of data_2s
             if data_val < cal_opt_val:
                 row[3:7] = "Condition - 1", kva, kvar, kw,"-"
             else:
@@ -95,7 +95,7 @@ class TruePowerFactorApp:
             for y in range(self.columns):
                 font_style = ("Arial", 15, "bold") if x == 0 else ("Arial", 15)
                 tk.Label(self.frame_2, text=self.data_2[x][y], width=20, anchor="center", borderwidth=1, relief="solid", font=font_style).grid(row=x, column=y, padx=0, pady=0, sticky="nsew")
-        tk.Button(self.frame_3, text="Print", command=self.export_pdf_condition_1, font=("Arial", 12, "bold")).place(relx=0.5, rely=0.5, anchor=NW)
+        tk.Button(self.frame_3, text="Print", command=self.export_pdf_condition_1, font=("Arial", 15, "bold")).place(relx=0.5, rely=0.5, anchor=NW)
 
     def header(self, canvas, doc):
         canvas.saveState()

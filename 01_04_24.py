@@ -20,16 +20,16 @@ def main_fun():
 
             # Compare 'OP' column with the input value
             df['Comparison'] = df['OP'].apply(
-                lambda x: 'Below' if x > input_value else ('Above' if x < input_value else 'Equal'))
+                lambda x: 'Below' if x > input_value else ('Above' if x < input_value else 'both'))
 
             df['KVA'] = df['OP'].apply(
-                lambda x: 'Below' if x > input_value else ('Above' if x < input_value else 'Equal'))
+                lambda x: 'Below' if x > input_value else ('Above' if x < input_value else 'both'))
 
             df['kW'] = df['OP'].apply(
-                lambda x: 'Below' if x > input_value else ('Above' if x < input_value else 'Equal'))
+                lambda x: 'Below' if x > input_value else ('Above' if x < input_value else 'both'))
 
             df['KVAr'] = df['OP'].apply(
-                lambda x: 'Below' if x > input_value else ('Above' if x < input_value else 'Equal'))
+                lambda x: 'Below' if x > input_value else ('Above' if x < input_value else 'both'))
 
             # Save the DataFrame back to Excel with the results in a new column
             output_file = 'output.xlsx'  # Change this to the desired output file path
