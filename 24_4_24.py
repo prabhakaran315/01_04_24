@@ -48,7 +48,7 @@ class TruePowerFactorApp:
             [300]
         ]
         self.rows = len(self.data_1)
-        self.columns = len(self.data_1[0])  # Number of columns is the length of the first row
+        self.columns = len(self.data_1[0])  # Number of columns is the length of the first rowz
 
     def create_widgets(self):
         # Frames
@@ -59,19 +59,26 @@ class TruePowerFactorApp:
         self.frame_3 = tk.Frame(self.root, height=80, bg="Grey")
         self.frame_3.pack(expand=True, fill=tk.BOTH)
 
+        self.primary = tk.StringVar()
+        self.secondary = tk.StringVar()
+
         # Labels
         tk.Label(self.frame_1, text="Conditions to Achieve True Power Factor Performance", bg="Grey", fg="White", font=("Arial", 20, "bold")).pack(padx=10, pady=10)
         tk.Label(self.frame_1, text="Enter the Primary value of transformer", bg="Grey", fg="White", font=("Arial", 14)).pack()
-        self.primary_entry = tk.Entry(self.frame_1, font=("Arial", 15))
+        self.primary_entry = tk.Entry(self.frame_1, textvariable=self.primary,font=("Arial", 15))
         self.primary_entry.pack()
 
-        tk.Label(self.frame_1, text="Enter the Secondary value of transformer", bg="Grey", fg="White", font=("Arial", 14)).pack()
+        self.label_1=tk.Label(self.frame_1, text="Enter the Secondary value of transformer", bg="Grey", fg="White", font=("Arial", 14)).pack()
 
-        self.secondary_entry = tk.Entry(self.frame_1, font=("Arial", 15))
+        self.secondary_entry = tk.Entry(self.frame_1,textvariable=self.secondary, font=("Arial", 15))
         self.secondary_entry.pack()
+
+        self.primary.trace_add('write', self.update_result)
+        self.secondary.trace_add('write', self.update_result)
 
         # Buttons
         tk.Button(self.frame_1, text="Submit", command=self.submit, font=("Arial", 15, "bold")).pack(padx=10, pady=10)
+
 
     def submit(self):
         try:
@@ -111,15 +118,7 @@ class TruePowerFactorApp:
         for x in range(self.rows):
             for y in range(self.columns):
                 font_style = ("Arial", 15, "bold") if x == 0 else ("Arial", 15)
-                tk.Label(self.frame_2, text=self.data_2[x][y], width=20, anchor="center", borderwidth=1, relief="solid",
-                         font=font_style).grid(row=x, column=y, padx=0, pady=0, sticky="nsew")
-        '''column = [str(row[5]) for row in self.data_2]
-        sort_column = sorted(column)
-        print("Sorted values :", sort_column)
-
-        first = sort_column[:3]
-        self.first_three = []'''
-
+                self.lab = tk.Label(self.frame_2, text=self.data_2[x][y], width=20, anchor="center", borderwidth=1, relief="solid", font=font_style).grid(row=x, column=y, padx=0, pady=0, sticky="nsew")
         self.first_three = []  # Initialize an empty list to store the filtered elements
 
         # Sort self.data_2 based on the 6th element
@@ -168,6 +167,13 @@ class TruePowerFactorApp:
         tk.Checkbutton(self.frame_3, text="", variable=self.hello, onvalue=1, offvalue=0, bg = "Grey").place(relx=0.42, rely=0.22, anchor=tk.NW)
         tk.Label(self.frame_3, text = ' If you want to print suggestion panel rating!!!', bg="Grey", fg = "White", font = ("Arial", 14)).place(relx=0.43, rely=0.2, anchor=tk.NW)
         tk.Button(self.frame_3, text="Print", command=self.export_pdf_condition_1, font=("Arial", 15, "bold")).place(relx=0.5, rely=0.5, anchor=tk.NW)
+
+    def update_result(self, *args):
+        # Clear previous labels in frame_2
+        for widget in self.frame_2.winfo_children():
+            widget.destroy()
+        for widget_1 in self.frame_3.winfo_children():
+            widget_1.destroy()
 
     def header(self, canvas, doc):
         canvas.saveState()
