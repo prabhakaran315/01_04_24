@@ -3,6 +3,8 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 import math
+
+from PySimpleGUI import MsgBox
 from docx import Document
 from docx.shared import RGBColor
 from docx2pdf import convert
@@ -37,7 +39,7 @@ import uuid
 #------------------------------------#
 
 #------------------Libraries ended---------------------#
-
+'''
 # while compling to excel uncomment this :
 if sys.platform.startswith('win'):
     # Redirect stdout and stderr to null device
@@ -57,7 +59,7 @@ def stdout_redirector(stream):
         yield
     finally:
         sys.stdout = old_stdout
-
+'''
 #-----------------Creating windows and assign empty values for variables-------------#
 
 root = Tk()
@@ -2627,7 +2629,7 @@ astracoprightp3.grid(row=1, column=0)
 logoframe4 = Frame(root, bg="#F6F6F8")
 logoframe4.place(relx=1.0, rely=1.0, anchor="se")
 
-# Create a text widget with some text
+''''# Create a text widget with some text
 astramakep4 = Text(logoframe4, height=1, width=20, highlightthickness=0, relief="flat")
 astramakep4.insert("end", "  Made with ❤ in India")
 astramakep4.configure(font=('Verdana', 8), bg="#F6F6F8", fg="gray")
@@ -2648,7 +2650,7 @@ astramakep4.configure(state="disabled")
 # Copy Right Lable - page - 4
 astracoprightp4 = Label(logoframe4, text="© 2023, InPhase | All Rights Reserved")
 astracoprightp4.configure(font=('Verdana', 8), bg="#F6F6F8")
-astracoprightp4.grid(row=1, column=0)
+astracoprightp4.grid(row=1, column=0)'''
 
 # Astra Lable Text
 astralable = Label(astrap1_frame, text="       Astra Rating Calculator - 3P3W")
@@ -6275,33 +6277,42 @@ import math
 from reportlab.lib.units import inch
 import datetime
 
+from tkinter import ttk
+from ttkthemes import themed_tk as tktheme
+from PIL import ImageTk, Image
+
 #--------------This frame for entries and submit button----------------#
 frame_1 = tk.Frame(astrap4_frame, bg=background_color)
 frame_1.pack(expand=True, fill=tk.BOTH)
 #------------------this frame for label the condition-1 name---------------------#
-frame_2 = tk.Frame(astrap4_frame, height=400, bg=background_color, highlightbackground="Black", highlightthickness=2)
+frame_2 = tk.Frame(astrap4_frame, height=314, bg=background_color, highlightbackground="Black", highlightthickness=2)
 frame_2.pack(expand=True, fill=tk.BOTH)
-tk.Label(frame_2, text="Optimal CT ratio for condition - 1", font=("Arial", 16, "bold"), bg=background_color).pack(anchor=tk.N)
+tk.Label(frame_2, text="Recommendation", font=("Arial", 16, "bold"), bg=background_color).pack(anchor=tk.N)
 
 tk.Label(frame_2, text="", bg=background_color).pack(anchor=tk.N)
 tk.Label(astrap4_frame, text="", bg=background_color).pack()
 
-#------------------this frame for label the suggestion name---------------------#
-frame_5 = tk.Frame(astrap4_frame, height=200, bg=background_color, highlightbackground="Black", highlightthickness=2)
-frame_5.pack(expand=True, fill=tk.BOTH)
-tk.Label(frame_5, text="Suggestion", font=("Arial", 16, "bold"), bg=background_color).pack(anchor=tk.N)
 
 #----------------- This frame for output of the condition-1 ------------------#
-frame_4 = tk.Frame(frame_2, height=450,width=1200, bg=background_color)
+frame_4 = tk.Frame(frame_2, height=314,width=1200, bg=background_color)
 frame_4.pack(expand=True, anchor=CENTER)
 
-#----------------- This frame for output of the suggestion ------------------#
-frame_6 = tk.Frame(frame_5, height=150,width=800, bg=background_color)
-frame_6.pack(expand=True, anchor=CENTER)
+#------------------this frame for label the suggestion name---------------------#
+frame_5 = tk.Frame(astrap4_frame, height=250, bg=background_color, highlightbackground="Black", highlightthickness=2)
+frame_5.pack(expand=True, fill=tk.BOTH)
+tk.Label(frame_5, text="Suggestion", font=("Arial", 16, "bold"), bg=background_color).pack(anchor=tk.N)
+#tk.Label(astrap4_frame, text="", bg=background_color).pack()
 
 #--------------------This frame for location label--------------------------#
-frame_3 = tk.Frame(astrap4_frame, height=80, bg=background_color)
+frame_3 = tk.Frame(astrap4_frame, height=90, bg=background_color)
 frame_3.pack(expand=True, fill=tk.BOTH)
+
+#----------------- This frame for output of the suggestion ------------------#
+frame_6 = tk.Frame(frame_5, height=250,width=800, bg=background_color)
+frame_6.pack(expand=True, anchor=CENTER)
+
+lab = tk.Label(frame_1, text="", bg=background_color, fg="Red", font=("Arial", 16, "bold"))
+lab.place(relx=0.92, rely=0.9,anchor=tk.SE)
 
 # location field - page - 4
 p4_location_field = Label(frame_3, text="location :" + str(selected_directory))
@@ -6309,10 +6320,38 @@ p4_location_field.configure(font=('Verdana', 9), bg="#F6F6F8")
 # p3_location_field.place(x=5, y=580)
 p4_location_field.place(relx=0, rely=1.0, anchor="sw")
 
+# Create a Frame widget and place it in the bottom-right corner of the root window
+logoframe4 = tk.Frame(frame_3, bg="#F6F6F8")
+logoframe4.place(relx=1.0, rely=1.0, anchor="se")
+
+# Create a text widget with some text
+astramakep4 = Text(logoframe4, height=1, width=20, highlightthickness=0, relief="flat")
+astramakep4.insert("end", "  Made with ❤ in India")
+astramakep4.configure(font=('Verdana', 8), bg="#F6F6F8", fg="gray")
+astramakep4.grid(row=0, column=0)
+
+# Get the position of the 'W' character
+posp4 = astramakep3.search("❤", "1.0")
+
+# Add a tag to the 'W' character
+astramakep4.tag_add("red", posp3, f"{posp3}+1c")
+
+# Configure the tag to use a different color
+astramakep4.tag_config("red", foreground="red", background="#F6F6F8", font=('Verdana', 8))
+
+# Disable the text widget so it's read-only and non-editable
+astramakep4.configure(state="disabled")
+
+# Copy Right Lable - page - 4
+astracoprightp4 = Label(logoframe4, text="© 2023, InPhase | All Rights Reserved")
+astracoprightp4.configure(font=('Verdana', 8), bg="#F6F6F8")
+astracoprightp4.grid(row=1, column=0)
+
 primary = tk.StringVar()
 secondary = tk.StringVar()
 
 def submit():
+    global lab
     try:
         value_1 = float(primary_entry.get())
         value_2 = float(secondary_entry.get())
@@ -6322,7 +6361,11 @@ def submit():
                 cal_opt_val = round(value_1 / value_2)
                 condition_1(value_1, value_2, cal_opt_val)
             else:
-                messagebox.showwarning('Error!', "primary value is less than secondary value")
+                #messagebox.showwarning('Error!', "Warning: primary value is less than secondary value")
+                #lab_1 = tk.Label(frame_7, text="Warning : primary value is less than secondary value", bg=background_color, fg="Red", font=("Arial", 16, "bold")).pack(anchor=tk.CENTER)
+                lab.config(text="Warning: primary value is less than secondary value")
+
+
         else:
             messagebox.showerror('Error!', "Kindly enter positive integers and greater than zero values")
     except ValueError:
@@ -6418,10 +6461,13 @@ def condition_1(value_1, value_2, cal_opt_val):
 '''
 
 def update_results(*args):
+    global lab
     for widget in frame_4.winfo_children():
         widget.destroy()
     for widget_1 in frame_6.winfo_children():
         widget_1.destroy()
+    lab.config(text="")
+
 
 def header(canvas, doc):
     canvas.saveState()
@@ -6576,6 +6622,7 @@ secondary.trace_add('write', update_results)
 
 # Buttons
 tk.Button(frame_1, text="Submit", command=submit, font=("Arial", 15, "bold")).pack(padx=10, pady=10)
+
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------#
 
