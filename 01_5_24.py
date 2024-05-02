@@ -1531,6 +1531,7 @@ def clear_results():
         AHFsize1entry.config(borderwidth=2, state="disable")
 
     elif (astranotebook.index(astranotebook.select()) == 1):
+
         status_p2_entry.config(borderwidth=2, state="normal")
         status_p2_entry.delete(0, "end")
         status_p2_entry.insert(0, (""))
@@ -1574,6 +1575,18 @@ def clear_results():
         p3_AHFsize1entry.delete(0, "end")
         p3_AHFsize1entry.insert(0, str(empty_entry.get(1.0, "end-1c")))
         p3_AHFsize1entry.config(borderwidth=2, state="disable")
+    '''elif (astranotebook.index(astranotebook.select()) == 3):
+        primary_entry.config(borderwidth=2, state="normal")
+        primary_entry.delete(0, "end")
+        primary_entry.insert(0, (""))
+        primary_entry.config(borderwidth=2, state="disable")
+
+        for x in range(0, 2):
+            p2_genrated_data[x].config(borderwidth=2, state="normal")
+            p2_genrated_data[x].delete(0, "end")
+            p2_genrated_data[x].insert(0, str(empty_entry.get(1.0, "end-1c")))
+            p2_genrated_data[x].config(borderwidth=2, state="disable")'''
+
 #-----------------------Astra clear screen code ended-----------------------#
 
 #---------------------Mandatory enrtries indication code started--------------------#
@@ -4033,6 +4046,13 @@ def clear_contents():
         p3_comment_box_message.delete(1.0, "end")
         p3_comment_box_message.insert(1.0, "Comments here...")
         p3_comment_box_message.config(fg='gray')
+
+    if (astranotebook.index(astranotebook.select()) == 3):
+        # Deleting the pervious loaded status
+        primary_entry.config(borderwidth=2, state="normal")
+        primary_entry.delete(0, "end")
+        secondary_entry.config(borderwidth=2, state="normal")
+        secondary_entry.delete(0, "end")
 #-----------------------Clear contents ended-------------------------#
 
 #---------------------New Document is started----------------#
