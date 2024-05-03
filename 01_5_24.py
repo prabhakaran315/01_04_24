@@ -159,24 +159,6 @@ def enable_modified_flag(*args):
         p3_location_field.config(text="location :" + str(selected_directory))
         p4_location_field.config(text="location :" + str(selected_directory))
         print(modified_flag)
-    if (astranotebook.index(astranotebook.select()) == 3):
-        astranotebook.tab(3, text="True Power Factor*")
-        p3_modified_indication.config(text="*")
-        # Clearing Astra Rating
-        p3_AHFsizeentry.config(borderwidth=2, state="normal")
-        p3_AHFsizeentry.delete(0, "end")
-        p3_AHFsizeentry.insert(0, str(empty_entry.get(1.0, "end-1c")))
-        p3_AHFsizeentry.config(borderwidth=2, state="disable")
-        # Clearing Astra Rating (ambient)
-        p3_AHFsize1entry.config(borderwidth=2, state="normal")
-        p3_AHFsize1entry.delete(0, "end")
-        p3_AHFsize1entry.insert(0, str(empty_entry.get(1.0, "end-1c")))
-        p3_AHFsize1entry.config(borderwidth=2, state="disable")
-        location_field.config(text="location :" + str(selected_directory))
-        p2_location_field.config(text="location :" + str(selected_directory))
-        p3_location_field.config(text="location :" + str(selected_directory))
-        p4_location_field.config(text="location :" + str(selected_directory))
-        print(modified_flag)
 
 # disable modified flag
 def disable_modified_flag(*args):
@@ -208,15 +190,6 @@ def disable_modified_flag(*args):
         p3_location_field.config(text="location :" + str(selected_directory))
         p4_location_field.config(text="location :" + str(selected_directory))
         print(modified_flag)
-    if (astranotebook.index(astranotebook.select()) == 3):
-        astranotebook.tab(3, text="True Power Factor")
-        p3_modified_indication.config(text="")
-        location_field.config(text="location :" + str(selected_directory))
-        p2_location_field.config(text="location :" + str(selected_directory))
-        p3_location_field.config(text="location :" + str(selected_directory))
-        p4_location_field.config(text="location :" + str(selected_directory))
-        print(modified_flag)
-
 
 #------------make rows bold--------------#
 def make_rows_bold(*rows):
@@ -6268,6 +6241,11 @@ p3_modified_indication = Label(astrap3_frame, text="")
 p3_modified_indication.configure(font=('Verdana', 14), bg="#F6F6F8")
 p3_modified_indication.place(x=763, y=10)
 
+# Modification indication for page 4
+p4_modified_indication = Label(astrap4_frame, text="")
+p4_modified_indication.configure(font=('Verdana', 14), bg="#F6F6F8")
+p4_modified_indication.place(x=763, y=10)
+
 # location field - page - 1
 location_field = Label(astrap1_frame, text="location :" + str(selected_directory))
 location_field.configure(font=('Verdana', 9), bg="#F6F6F8")
@@ -6381,15 +6359,26 @@ def submit():
                 cal_opt_val = round(value_1 / value_2)
                 condition_1(value_1, value_2, cal_opt_val)
             else:
-                #messagebox.showwarning('Error!', "Warning: primary value is less than secondary value")
-                #lab_1 = tk.Label(frame_7, text="Warning : primary value is less than secondary value", bg=background_color, fg="Red", font=("Arial", 16, "bold")).pack(anchor=tk.CENTER)
                 lab.config(text="Warning: primary value is less than secondary value")
-
+                p_l_S = messagebox.askquestion('Conformation', "Warning: primary value is less than secondary value.\n\tDo you want to proceed")
+                if p_l_S == 'yes':
+                    messagebox.showinfo('Processed',"You entered value is processed")
+                    cal_opt_val = round(value_1 / value_2)
+                    condition_1(value_1, value_2, cal_opt_val)
+                elif p_l_S == 'no':
+                    p_s_s = messagebox.askquestion('Conformation',"Do you want to swap the values?")
+                    if p_s_s == 'yes':
+                        temp = float(primary_entry.get())
+                        value_1 = float(secondary_entry.get())
+                        value_2 = temp
+                        messagebox.showinfo('Processed', "Values are swapped and processed")
+                        cal_opt_val = round(value_1 / value_2)
+                        condition_1(value_1, value_2, cal_opt_val)
 
         else:
-            messagebox.showerror('Error!', "Kindly enter positive integers and greater than zero values")
+            messagebox.showerror('Error!', "Enter positive integers and greater than zero values")
     except ValueError:
-        messagebox.showerror("Error!", "Kindly enter both values as numbers")
+        messagebox.showerror("Error!", "Enter both values as numbers")
 
 def condition_1(value_1, value_2, cal_opt_val):
     global hello
@@ -6487,6 +6476,13 @@ def update_results(*args):
     for widget_1 in frame_6.winfo_children():
         widget_1.destroy()
     lab.config(text="")
+    astranotebook.tab(3, text="True Power Factor*")
+    # p4_modified_indication.config(text="*")
+    location_field.config(text="location :" + str(selected_directory))
+    p2_location_field.config(text="location :" + str(selected_directory))
+    p3_location_field.config(text="location :" + str(selected_directory))
+    p4_location_field.config(text="location :" + str(selected_directory))
+    print(modified_flag)
 
 
 def header(canvas, doc):
