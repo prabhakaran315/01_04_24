@@ -160,6 +160,17 @@ def enable_modified_flag(*args):
         p4_location_field.config(text="location :" + str(selected_directory))
         print(modified_flag)
 
+    if (astranotebook.index(astranotebook.select()) == 3):
+        astranotebook.tab(3, text="True Power Factor*")
+        p4_modified_indication.config(text="*")
+        location_field.config(text="location :" + str(selected_directory))
+        p2_location_field.config(text="location :" + str(selected_directory))
+        p3_location_field.config(text="location :" + str(selected_directory))
+        p4_location_field.config(text="location :" + str(selected_directory))
+        print('modified flag : ', modified_flag)
+
+
+
 # disable modified flag
 def disable_modified_flag(*args):
     # page -1 disable modfied tags
@@ -1469,8 +1480,9 @@ def export_to_pdf():
         try:
             if primary_entry.get() and secondary_entry.get():
                 lab.config(text="")
-                astranotebook.tab(3, text="True Power Factor ")
-                head_1.config(text="True Power Factor Performance Calculator ")
+                #astranotebook.tab(3, text="True Power Factor")
+                #p4_modified_indication.config(text="")
+                #head_1.config(text="True Power Factor Performance Calculator")
                 export_ini.config(text="Export initiated...")
 
                 if export_dir_name == '':
@@ -1479,6 +1491,7 @@ def export_to_pdf():
                         filetypes=(("PDF", "*.docx"), ("All Files", "*.*")),
                         initialfile="Design Document"
                     )
+
                     try:
                         os.chdir(os.path.dirname(export_dir_name))
                         export_file_name = os.path.basename(export_dir_name).split('.', 1)[0]
@@ -1617,13 +1630,14 @@ def export_to_pdf():
                     border_el.set(qn('w:color'), 'auto')
                     pg_borders.append(border_el)  # register single border to border el
                 sec_pr.append(pg_borders)  # apply border changes to section
-
                 doc.save(str(export_file_name) + ".docx")
                 convert(str(export_file_name) + ".docx")
                 os.remove(str(export_file_name) + ".docx")
 
                 save_nfo()
                 export_ini.config(text="Export Completed...")
+                astranotebook.tab(3, text="True Power Factor")
+                p4_modified_indication.config(text="")
             else:
                 #messagebox.showerror('Input Error', "Fill the both entries")
                 export_ini.config(text="You need to enter the entry values")
@@ -3389,7 +3403,7 @@ def update_result(*args):
             lab.config(text="")
             astranotebook.tab(3, text="True Power Factor*")
 
-            # p4_modified_indication.config(text="*")
+            p4_modified_indication.config(text="*")
             location_field.config(text="location :" + str(selected_directory))
             p2_location_field.config(text="location :" + str(selected_directory))
             p3_location_field.config(text="location :" + str(selected_directory))
@@ -6430,11 +6444,6 @@ p3_modified_indication = Label(astrap3_frame, text="")
 p3_modified_indication.configure(font=('Verdana', 14), bg="#F6F6F8")
 p3_modified_indication.place(x=763, y=10)
 
-# Modification indication for page 4
-p4_modified_indication = Label(astrap4_frame, text="")
-p4_modified_indication.configure(font=('Verdana', 14), bg="#F6F6F8")
-p4_modified_indication.place(x=763, y=10)
-
 # location field - page - 1
 location_field = Label(astrap1_frame, text="location :" + str(selected_directory))
 location_field.configure(font=('Verdana', 9), bg="#F6F6F8")
@@ -6471,6 +6480,10 @@ from PIL import ImageTk, Image
 #--------------This frame for entries and submit button----------------#
 frame_1 = tk.Frame(astrap4_frame, bg=background_color)
 frame_1.pack(expand=True, fill=tk.BOTH)
+
+# Modification indication for page 4
+p4_modified_indication = tk.Label(frame_1, text="", font=('Verdana', 14, 'bold'), bg=background_color, fg="black")
+p4_modified_indication.place(relx=0.653, rely=0.135, anchor=tk.CENTER)
 #------------------this frame for label the condition-1 name---------------------#
 frame_2 = tk.Frame(astrap4_frame, height=314, bg=background_color, highlightbackground="Black", highlightthickness=2)
 frame_2.pack(expand=True, fill=tk.BOTH)
@@ -6672,9 +6685,10 @@ def update_results(*args):
         widget_1.destroy()
     lab.config(text="")
     export_ini.config(text="")
-    astranotebook.tab(3, text="True Power Factor*")
+    #astranotebook.tab(3, text="True Power Factor*")
     print(head_1)
-    head_1.config(text="True Power Factor Performance Calculator*")
+    #head_1.config(text="True Power Factor Performance Calculator*")
+    enable_modified_flag()
     # p4_modified_indication.config(text="*")
     location_field.config(text="location :" + str(selected_directory))
     p2_location_field.config(text="location :" + str(selected_directory))
