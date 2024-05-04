@@ -15,7 +15,7 @@ from docx.shared import Cm, Inches
 from docxcompose.composer import Composer
 from docx.enum.section import WD_ORIENT
 from docx.enum.section import WD_SECTION
-from docx.enum.table import WD_TABLE_ALIGNMENT
+from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
 from docx.enum.table import WD_ALIGN_VERTICAL
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
@@ -206,7 +206,7 @@ def make_rows_bold(*rows):
 def export_to_pdf():
     # page -1 export to pdf function
     global export_progress_flag
-    global table
+    global table, export_ini
     fetch_comment_box_message()
     # print(astranotebook.index(astranotebook.select()))
     global number_of_entries, export_dir_name, export_file_name, selected_directory, selected_file_name
@@ -1462,6 +1462,177 @@ def export_to_pdf():
                 status_p3_entry.config(borderwidth=2, state="disable")
         except:
             pass
+
+#-------------------- True power factor export button code ------------------#
+    if (astranotebook.index(astranotebook.select()) == 3):
+        submit()
+        try:
+            if primary_entry.get() and secondary_entry.get():
+                lab.config(text="")
+                astranotebook.tab(3, text="True Power Factor ")
+                head_1.config(text="True Power Factor Performance Calculator ")
+                export_ini.config(text="Export initiated...")
+
+                if export_dir_name == '':
+                    export_dir_name = filedialog.asksaveasfilename(
+                        title="Export As",
+                        filetypes=(("PDF", "*.docx"), ("All Files", "*.*")),
+                        initialfile="Design Document"
+                    )
+                    try:
+                        os.chdir(os.path.dirname(export_dir_name))
+                        export_file_name = os.path.basename(export_dir_name).split('.', 1)[0]
+                        # Set selected directory and file name
+                        selected_directory = export_dir_name
+                        selected_file_name = export_file_name
+                    except OSError as e:
+                        print("Error changing directory:", e)
+                else:
+                    export_dir_name = selected_directory
+                    export_file_name = selected_file_name
+
+                doc = Document()
+                # Adding Header to the Document
+                header = doc.sections[0].header
+                header_para = header.paragraphs[0]
+                header_para.text = "InPhase Power Technologies - ASTRA Sizing Document"
+                header_para.alignment = WD_TABLE_ALIGNMENT.CENTER
+
+                # Add Title to the document
+                doc.add_heading('True Power Factor Performance Calculator :', level=1)
+
+                # Create table
+                table = doc.add_table(rows=13, cols=6)
+                table.alignment = WD_TABLE_ALIGNMENT.CENTER
+
+                headings = ['ID', 'Panel Rating', 'Optimal CT Ratio', 'Condition', 'Minimum kVAr', 'Minimum kW']
+                #headings.extend(item[:4] + [item[4], item[5]] for item in data_2[1:])
+                column_widths = [Inches(0.5), Inches(2), Inches(2), Inches(1.5), Inches(1.5), Inches(1.5)]
+                print(headings)
+                # Assuming table is initialized properly before this loop
+                for i, (heading, width) in enumerate(zip(headings, column_widths)):
+                    cell = table.cell(0, i)
+                    cell.text = heading
+                    cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+                    cell.width = width
+
+                    # Align text vertically and horizontally
+                    cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+                    cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+
+                # Set row height
+                for row in table.rows:
+                    row.height = Cm(0.75)
+                # Set table style
+                table.style = 'Light Grid Accent 5'
+
+                # Update the cell text using loops
+                for i in range(12):
+                    table.cell(i + 1, 0).text = str(data_2[i + 1][0])
+                    table.cell(i + 1, 1).text = str(data_2[i + 1][1])
+                    table.cell(i + 1, 2).text = str(data_2[i + 1][2])
+                    table.cell(i + 1, 3).text = str(data_2[i + 1][3])
+                    table.cell(i + 1, 4).text = str(data_2[i + 1][4])
+                    table.cell(i + 1, 5).text = str(data_2[i + 1][5])
+
+                # Make table headers bold and adjust row height
+                for row in table.rows:
+                    for cell in row.cells:
+                        cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+                        for paragraph in cell.paragraphs:
+                            paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+
+                # Add Title to the document
+                doc.add_heading('Suggestion :', level=1)
+
+                # Create second table
+                table_1 = doc.add_table(rows=4, cols=3)
+                table_1.alignment = WD_TABLE_ALIGNMENT.CENTER
+
+                headings_1 = ['ID', 'Panel Rating', 'Minimum kW']
+                column_widths_1 = [Inches(0.5), Inches(2), Inches(2)]
+
+                # Set table headers and properties for second table
+                for i, (heading, width) in enumerate(zip(headings_1, column_widths_1)):
+                    cell = table_1.cell(0, i)
+                    cell.text = heading
+                    cell.width = width
+
+                    # Align text vertically and horizontally
+                    cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+                    for paragraph in cell.paragraphs:
+                        paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+
+                # Update the cell text using loops for second table
+                for i in range(3):
+                    panel_id = first_three[i][0]
+                    panel_rating = first_three[i][1]
+                    panel_kw = first_three[i][2]
+
+                    table_1.cell(i + 1, 0).text = str(panel_id)
+                    table_1.cell(i + 1, 1).text = str(panel_rating)
+                    table_1.cell(i + 1, 2).text = str(panel_kw)
+
+                    # Align text vertically and horizontally
+                    for j in range(3):
+                        cell = table_1.cell(i + 1, j)
+                        cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+                        for paragraph in cell.paragraphs:
+                            paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+
+                # Set row height
+                for row_1 in table_1.rows:
+                    row_1.height = Cm(0.75)
+                # Set table style
+                table_1.style = 'Light Grid Accent 5'
+
+                doc.add_paragraph(''' ''')
+                word = "* - Represents User Inputs"
+                p = doc.add_paragraph()
+                runner = p.add_run(word)
+                runner.bold = True
+                runner.italic = True
+
+                doc.add_heading("Prepared By", 1)
+                para = doc.add_paragraph()
+                bold_para = para.add_run(''' \n Advanced Power Quality''')
+
+                section = doc.sections[0]
+                section.left_margin = Inches(0.7)
+                section.right_margin = Inches(0.7)
+                section.top_margin = Inches(1.0)
+                section.bottom_margin = Inches(1.0)
+                # Set border around the entire page with 0.5 inches margin
+                # Adding a border to a Page
+                sec_pr = doc.sections[0]._sectPr  # get the section properties el
+                # create new borders el
+                pg_borders = OxmlElement('w:pgBorders')
+                # specifies how the relative positioning of the borders should be calculated
+                pg_borders.set(qn('w:offsetFrom'), 'page')
+                for border_name in ('top', 'left', 'bottom', 'right',):  # set all borders
+                    border_el = OxmlElement(f'w:{border_name}')
+                    border_el.set(qn('w:val'), 'single')  # a single line
+                    border_el.set(qn('w:sz'), '4')  # for meaning of  remaining attrs please look docs
+                    border_el.set(qn('w:space'), '24')
+                    border_el.set(qn('w:color'), 'auto')
+                    pg_borders.append(border_el)  # register single border to border el
+                sec_pr.append(pg_borders)  # apply border changes to section
+
+                doc.save(str(export_file_name) + ".docx")
+                convert(str(export_file_name) + ".docx")
+                os.remove(str(export_file_name) + ".docx")
+
+                save_nfo()
+                export_ini.config(text="Export Completed...")
+            else:
+                #messagebox.showerror('Input Error', "Fill the both entries")
+                export_ini.config(text="You need to enter the entry values")
+
+        except:
+            pass
+
+#-------------------- True power factor export code end ---------------------#
+
 #--------------------------Export PDF for astra is ended----------------------#
 
 #--------------------------Astra clear screen code started--------------------------#
@@ -2337,9 +2508,9 @@ def nonotch():
         p3_mildnotchbtn.config(bg="white", fg="black", font=font.Font(family='Calibri', size=10, weight=font.NORMAL))
         p3_basenentry.delete(0, "end")
         p3_basenentry.insert(0, ("6"))
-#------------------------Function Nonotch is ended------------------#
+#------------------------Function Nonotch is ended--------------------------#
 
-#-------------------------Function Fhz is strated----------------#
+#-------------------------Function Fhz is strated---------------------------#
 def fhz():
     global save_flag
     if (astranotebook.index(astranotebook.select()) == 0):
@@ -2528,7 +2699,7 @@ for i in range(height):
 astranotebook.add(astrap1_frame, text="Astra 3P,3W")
 astranotebook.add(astrap2_frame, text="Astra 3P,4W")
 astranotebook.add(astrap3_frame, text="Astra 3P, N")
-astranotebook.add(astrap4_frame, text="True Power Factor")
+astranotebook.add(astrap4_frame, text="True Power Factor ")
 
 # Create a Frame widget and place it in the bottom-right corner of the astrap1_frame window
 logoframe1 = Frame(astrap1_frame, bg="#F6F6F8")
@@ -3210,6 +3381,21 @@ def update_result(*args):
                 tpf = 1
                 TPFlable.config(fg="red")
 
+            global lab
+            for widget in frame_4.winfo_children():
+                widget.destroy()
+            for widget_1 in frame_6.winfo_children():
+                widget_1.destroy()
+            lab.config(text="")
+            astranotebook.tab(3, text="True Power Factor*")
+
+            # p4_modified_indication.config(text="*")
+            location_field.config(text="location :" + str(selected_directory))
+            p2_location_field.config(text="location :" + str(selected_directory))
+            p3_location_field.config(text="location :" + str(selected_directory))
+            p4_location_field.config(text="location :" + str(selected_directory))
+            print(modified_flag)
+
             kw = math.sqrt(3) * (voltage / 1000) * current * ipf
             kva = math.sqrt(3) * (voltage / 1000) * current
             kvar = kw * (math.tan(math.acos(ipf)) - math.tan(math.acos(tpf)))
@@ -3876,6 +4062,8 @@ def compile_save_data():
         'p3_amb_temp': p3_ambtempentry.get(),
         'p3_amp_fact': p3_ambfactorentry.get(),
         'p3_comments': p3_comment_box_message.get(1.0, "end"),
+        'p4_primary value': primary_entry.get(),
+        'p4_secondary value': secondary_entry.get(),
     }
 
 #-------------------Compile save data is ended---------------#
@@ -5419,6 +5607,7 @@ ambfactorentry.grid(row=9, column=3, padx=5, pady=5, columnspan=6)
 
 # Empty lable
 empty_entry.grid(row=0, column=0)
+
 #----------------------Menu bar code ended---------------------#
 
 #-----------------------Create entries page -1 code started----------------#
@@ -6312,6 +6501,9 @@ frame_6.pack(expand=True, anchor=CENTER)
 lab = tk.Label(frame_1, text="", bg=background_color, fg="Red", font=("Arial", 16, "bold"))
 lab.place(relx=0.92, rely=0.9,anchor=tk.SE)
 
+export_ini = tk.Label(frame_3, text="", font=("Arial", 18, "bold"),bg=background_color, fg="Red")
+export_ini.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+
 # location field - page - 4
 p4_location_field = Label(frame_3, text="location :" + str(selected_directory))
 p4_location_field.configure(font=('Verdana', 9), bg="#F6F6F8")
@@ -6360,20 +6552,19 @@ def submit():
                 condition_1(value_1, value_2, cal_opt_val)
             else:
                 lab.config(text="Warning: primary value is less than secondary value")
-                p_l_S = messagebox.askquestion('Conformation', "Warning: primary value is less than secondary value.\n\tDo you want to proceed")
-                if p_l_S == 'yes':
-                    messagebox.showinfo('Processed',"You entered value is processed")
+                p_l_S = messagebox.askyesnocancel('Conformation', "Warning: primary value is less than secondary value.\n\tDo you want to swap the values?")
+                if p_l_S == True:
+                    temp = float(primary_entry.get())
+                    value_1 = float(secondary_entry.get())
+                    value_2 = temp
+                    messagebox.showinfo('Processed', "Values are swapped and processed")
                     cal_opt_val = round(value_1 / value_2)
                     condition_1(value_1, value_2, cal_opt_val)
-                elif p_l_S == 'no':
-                    p_s_s = messagebox.askquestion('Conformation',"Do you want to swap the values?")
-                    if p_s_s == 'yes':
-                        temp = float(primary_entry.get())
-                        value_1 = float(secondary_entry.get())
-                        value_2 = temp
-                        messagebox.showinfo('Processed', "Values are swapped and processed")
-                        cal_opt_val = round(value_1 / value_2)
-                        condition_1(value_1, value_2, cal_opt_val)
+
+                elif p_l_S == False:
+                    messagebox.showinfo('Processed', "You entered value is processed")
+                    cal_opt_val = round(value_1 / value_2)
+                    condition_1(value_1, value_2, cal_opt_val)
 
         else:
             messagebox.showerror('Error!', "Enter positive integers and greater than zero values")
@@ -6389,17 +6580,17 @@ def condition_1(value_1, value_2, cal_opt_val):
     kw = math.ceil(kva * 0.05)
     data_1 = [
             ["ID", "Panel Rating", "Optimal CT Ratio", "Condition", "Minimum kVAr", "Minimum kW"],
-            [1, "630A ASTRA - B 3", 1252, "", "", ""],
-            [2, "630A ASTRA - B 5", 1809, "", "", ""],
+            [1, "630A ASTRA - B03", 1252, "", "", ""],
+            [2, "630A ASTRA - B05", 1809, "", "", ""],
             [3, "630A ASTRA - B10", 2782, "", "", ""],
-            [4, "315A ASTRA - B 3", 835, "", "", ""],
-            [5, "315A ASTRA - B 5", 1252, "", "", ""],
+            [4, "315A ASTRA - B03", 835, "", "", ""],
+            [5, "315A ASTRA - B05", 1252, "", "", ""],
             [6, "315A ASTRA - B10", 1530, "", "", ""],
             [7, "420A ASTRA - B10", 1669, "", "", ""],
-            [8, "420A ASTRA - B 5", 1252, "", "", ""],
+            [8, "420A ASTRA - B05", 1252, "", "", ""],
             [9, "210A ASTRA - B10", 1530, "", "", ""],
-            [10, "210A ASTRA - B 5", 696, "", "", ""],
-            [11, "150A ASTRA - B 5", 835, "", "", ""],
+            [10, "210A ASTRA - B05", 696, "", "", ""],
+            [11, "150A ASTRA - B05", 835, "", "", ""],
             [12, "150A ASTRA - B10", 1669, "", "", ""]
         ]
     data_3 = [
@@ -6434,6 +6625,7 @@ def condition_1(value_1, value_2, cal_opt_val):
         for y in range(len(data_2[0])):
             font_style = ("Arial", 15, "bold") if x == 0 else ("Arial", 15)
             tk.Label(frame_4, text=data_2[x][y], width=20, anchor="center",bg=background_color, borderwidth=1, relief="solid", font=font_style).grid(row=x, column=y, padx=0, pady=0, sticky="nsew")
+            print(data_2[x][y])
 
     first_three = []
     sort_column = sorted(data_2, key=lambda x: str(x[5]))
@@ -6471,12 +6663,18 @@ def condition_1(value_1, value_2, cal_opt_val):
 
 def update_results(*args):
     global lab
+    global head_1
+    global export_ini
+    print(lab)
     for widget in frame_4.winfo_children():
         widget.destroy()
     for widget_1 in frame_6.winfo_children():
         widget_1.destroy()
     lab.config(text="")
+    export_ini.config(text="")
     astranotebook.tab(3, text="True Power Factor*")
+    print(head_1)
+    head_1.config(text="True Power Factor Performance Calculator*")
     # p4_modified_indication.config(text="*")
     location_field.config(text="location :" + str(selected_directory))
     p2_location_field.config(text="location :" + str(selected_directory))
@@ -6485,7 +6683,7 @@ def update_results(*args):
     print(modified_flag)
 
 
-def header(canvas, doc):
+'''def header(canvas, doc):
     canvas.saveState()
     canvas.drawImage('test.png', 40, 770, width=100, height=50)
     canvas.restoreState()
@@ -6518,7 +6716,7 @@ def export_pdf_condition_1():
     elements = [
         header_text,
         Spacer(1, 12),
-        Paragraph("True Power Factor", title_style),
+        Paragraph("True Power Factor ", title_style),
         Spacer(1, 12),
         Paragraph("The true power factor is a measure of how efficiently electrical power is being used. "
                 "It represents the ratio of true power (measured in watts) to apparent power (measured in volt-amperes). "
@@ -6565,6 +6763,7 @@ def export_pdf_condition_1():
                 table_data.append(list(row))
 
         table = Table(table_data, repeatRows=1)
+        table.style = 'Light Grid Accent 5'
         table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
@@ -6580,7 +6779,7 @@ def export_pdf_condition_1():
         print("Error:", e)
 
     doc.build(elements)
-    messagebox.showinfo("Done", "PDF file exported Successfully!!!")
+    messagebox.showinfo("Done", "PDF file exported Successfully!!!")'''
 
 #------------- If I want check box to access the first three line of minimum value then remove the command of below code--------------#
 '''   check_box = hello.get()
@@ -6624,7 +6823,8 @@ def export_pdf_condition_1():
         messagebox.showinfo("Done", "PDF file exported Successfully!!!")
 '''
 # Labels
-tk.Label(frame_1, text="Conditions to Achieve True Power Factor Performance", bg=background_color, fg="Black", font=("Arial", 20, "bold")).pack(padx=10, pady=10)
+head_1=tk.Label(frame_1, text="True Power Factor Performance Calculator", bg=background_color, fg="Black", font=("Arial", 20, "bold"))
+head_1.pack(padx=10, pady=10)
 tk.Label(frame_1, text="Enter the Primary value of transformer", bg=background_color, fg="Black", font=("Arial", 14)).pack()
 primary_entry = tk.Entry(frame_1, textvariable=primary, font=("Arial", 15))
 primary_entry.pack()
@@ -6650,6 +6850,7 @@ root.state('zoomed')
 import_progress_flag = 1
 astranotebook.select(astrap3_frame)
 selection_process()
+astranotebook.select(astrap4_frame)
 astranotebook.select(astrap2_frame)
 selection_process()
 astranotebook.select(astrap1_frame)
