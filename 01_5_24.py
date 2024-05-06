@@ -4921,7 +4921,6 @@ def import_nfo_data():
             print(e)
             messagebox.showerror("Import Information", "Invalid File")
     except:
-        pass
         print("Path Not Defined")
 #----------------Import button code ended-----------------#
 
@@ -6463,59 +6462,46 @@ p3_location_field.configure(font=('Verdana', 9), bg="#F6F6F8")
 p3_location_field.place(relx=0, rely=1.0, anchor="sw")
 
 #-----------------------------------------------True Power Factor------------------------------------------------------#
-import tkinter as tk
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
-from reportlab.platypus import Table, Spacer, Paragraph, BaseDocTemplate, Frame, PageTemplate, TableStyle
-from reportlab.lib import colors
-from tkinter import messagebox
-import math
-from reportlab.lib.units import inch
-import datetime
-
-from tkinter import ttk
-from ttkthemes import themed_tk as tktheme
-from PIL import ImageTk, Image
 
 #--------------This frame for entries and submit button----------------#
-frame_1 = tk.Frame(astrap4_frame, bg=background_color)
-frame_1.pack(expand=True, fill=tk.BOTH)
+frame_1 = Frame(astrap4_frame, bg=background_color)
+frame_1.pack(expand=True, fill=BOTH)
 
 # Modification indication for page 4
-p4_modified_indication = tk.Label(frame_1, text="", font=('Verdana', 14, 'bold'), bg=background_color, fg="black")
-p4_modified_indication.place(relx=0.653, rely=0.135, anchor=tk.CENTER)
+p4_modified_indication = Label(frame_1, text="", font=('Verdana', 14, 'bold'), bg=background_color, fg="black")
+p4_modified_indication.place(relx=0.651, rely=0.117, anchor=CENTER)
 #------------------this frame for label the condition-1 name---------------------#
-frame_2 = tk.Frame(astrap4_frame, height=314, bg=background_color, highlightbackground="Black", highlightthickness=2)
-frame_2.pack(expand=True, fill=tk.BOTH)
-tk.Label(frame_2, text="Recommendation", font=("Arial", 16, "bold"), bg=background_color).pack(anchor=tk.N)
+frame_2 = Frame(astrap4_frame, height=314, bg=background_color, highlightbackground="Black", highlightthickness=2)
+frame_2.pack(expand=True, fill=BOTH)
+Label(frame_2, text="Recommendation", font=("Arial", 16, "bold"), bg=background_color).pack(anchor=N)
 
-tk.Label(frame_2, text="", bg=background_color).pack(anchor=tk.N)
-tk.Label(astrap4_frame, text="", bg=background_color).pack()
+Label(frame_2, text="", bg=background_color).pack(anchor=N)
+Label(astrap4_frame, text="", bg=background_color).pack()
 
 
 #----------------- This frame for output of the condition-1 ------------------#
-frame_4 = tk.Frame(frame_2, height=314,width=1200, bg=background_color)
+frame_4 = Frame(frame_2, height=314,width=1200, bg=background_color)
 frame_4.pack(expand=True, anchor=CENTER)
 
 #------------------this frame for label the suggestion name---------------------#
-frame_5 = tk.Frame(astrap4_frame, height=250, bg=background_color, highlightbackground="Black", highlightthickness=2)
-frame_5.pack(expand=True, fill=tk.BOTH)
-tk.Label(frame_5, text="Suggestion", font=("Arial", 16, "bold"), bg=background_color).pack(anchor=tk.N)
+frame_5 = Frame(astrap4_frame, height=250, bg=background_color, highlightbackground="Black", highlightthickness=2)
+frame_5.pack(expand=True, fill=BOTH)
+Label(frame_5, text="Suggestion", font=("Arial", 16, "bold"), bg=background_color).pack(anchor=N)
 #tk.Label(astrap4_frame, text="", bg=background_color).pack()
 
 #--------------------This frame for location label--------------------------#
-frame_3 = tk.Frame(astrap4_frame, height=90, bg=background_color)
-frame_3.pack(expand=True, fill=tk.BOTH)
+frame_3 = Frame(astrap4_frame, height=90, bg=background_color)
+frame_3.pack(expand=True, fill=BOTH)
 
 #----------------- This frame for output of the suggestion ------------------#
-frame_6 = tk.Frame(frame_5, height=250,width=800, bg=background_color)
+frame_6 = Frame(frame_5, height=250,width=800, bg=background_color)
 frame_6.pack(expand=True, anchor=CENTER)
 
-lab = tk.Label(frame_1, text="", bg=background_color, fg="Red", font=("Arial", 16, "bold"))
-lab.place(relx=0.92, rely=0.9,anchor=tk.SE)
+lab = Label(frame_1, text="", bg=background_color, fg="Red", font=("Arial", 16, "bold"))
+lab.place(relx=0.92, rely=0.9,anchor=SE)
 
-export_ini = tk.Label(frame_3, text="", font=("Arial", 18, "bold"),bg=background_color, fg="Red")
-export_ini.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+export_ini = Label(frame_3, text="", font=("Arial", 18, "bold"),bg=background_color, fg="Red")
+export_ini.place(relx=0.5, rely=0.5, anchor=CENTER)
 
 # location field - page - 4
 p4_location_field = Label(frame_3, text="location :" + str(selected_directory))
@@ -6524,7 +6510,7 @@ p4_location_field.configure(font=('Verdana', 9), bg="#F6F6F8")
 p4_location_field.place(relx=0, rely=1.0, anchor="sw")
 
 # Create a Frame widget and place it in the bottom-right corner of the root window
-logoframe4 = tk.Frame(frame_3, bg="#F6F6F8")
+logoframe4 = Frame(frame_3, bg="#F6F6F8")
 logoframe4.place(relx=1.0, rely=1.0, anchor="se")
 
 # Create a text widget with some text
@@ -6550,8 +6536,8 @@ astracoprightp4 = Label(logoframe4, text="© 2023, InPhase | All Rights Reserved
 astracoprightp4.configure(font=('Verdana', 8), bg="#F6F6F8")
 astracoprightp4.grid(row=1, column=0)
 
-primary = tk.StringVar()
-secondary = tk.StringVar()
+primary = StringVar()
+secondary = StringVar()
 
 def submit():
     global lab
@@ -6582,10 +6568,11 @@ def submit():
         else:
             messagebox.showerror('Error!', "Enter positive integers and greater than zero values")
     except ValueError:
-        messagebox.showerror("Error!", "Enter both values as numbers")
+        messagebox.showerror("Error!", "Enter both values")
+        export_ini.config(text="Enter the both values...")
 
 def condition_1(value_1, value_2, cal_opt_val):
-    global hello
+    global hello, rows, columns
     global first_three
     global data_2
     kva = math.floor(1.732 * 415.0 * (value_1 / 1000))
@@ -6637,7 +6624,8 @@ def condition_1(value_1, value_2, cal_opt_val):
     for x in range(len(data_2)):
         for y in range(len(data_2[0])):
             font_style = ("Arial", 15, "bold") if x == 0 else ("Arial", 15)
-            tk.Label(frame_4, text=data_2[x][y], width=20, anchor="center",bg=background_color, borderwidth=1, relief="solid", font=font_style).grid(row=x, column=y, padx=0, pady=0, sticky="nsew")
+            true_pf = Label(frame_4, text=data_2[x][y], width=20, anchor="center",bg=background_color, borderwidth=1, relief="solid", font=font_style)
+            true_pf.grid(row=x, column=y, padx=0, pady=0, sticky="nsew")
             print(data_2[x][y])
 
     first_three = []
@@ -6647,13 +6635,13 @@ def condition_1(value_1, value_2, cal_opt_val):
         if str(row[5]) in [str(item[5]) for item in first]:
             first_three.append((row[0], row[1], row[5]))
 
-    table_frame = tk.Frame(frame_6, bg=background_color)
+    table_frame = Frame(frame_6, bg=background_color)
     table_frame.grid(row=len(data_1) + 1, column=0, columnspan=3, pady=10)
 
-    tk.Label(table_frame, text="Optimal Panel Rating Based on Optimum kW", font=("Arial", 16, "bold"), bg=background_color).grid(row=0, column=0, columnspan=5, padx=9, pady=5)
-    tk.Label(table_frame, text="Panel ID ", font=("Arial", 14, "bold"), bg=background_color).grid(row=1, column=0, padx=5, pady=5)
-    tk.Label(table_frame, text="Panel Rating", font=("Arial", 14, "bold"), bg=background_color).grid(row=1, column=1, padx=5, pady=5)
-    tk.Label(table_frame, text="Minimum kW", font=("Arial", 14, "bold"), bg=background_color).grid(row=1, column=2, padx=5, pady=5)
+    Label(table_frame, text="Optimal Panel Rating Based on Optimum kW", font=("Arial", 16, "bold"), bg=background_color).grid(row=0, column=0, columnspan=5, padx=9, pady=5)
+    Label(table_frame, text="Panel ID ", font=("Arial", 14, "bold"), bg=background_color).grid(row=1, column=0, padx=5, pady=5)
+    Label(table_frame, text="Panel Rating", font=("Arial", 14, "bold"), bg=background_color).grid(row=1, column=1, padx=5, pady=5)
+    Label(table_frame, text="Minimum kW", font=("Arial", 14, "bold"), bg=background_color).grid(row=1, column=2, padx=5, pady=5)
 
     row_index = 2
     for i in range(min(3, len(first_three))):
@@ -6664,15 +6652,20 @@ def condition_1(value_1, value_2, cal_opt_val):
 
         category, data, data_1 = pan_rat
 
-        tk.Label(table_frame, text=category, font=("Arial", 14), bg=background_color).grid(row=row_index, column=0, padx=5, pady=5)
-        tk.Label(table_frame, text=str(data), font=("Arial", 14), bg=background_color).grid(row=row_index, column=1, padx=5, pady=5)
-        tk.Label(table_frame, text=str(data_1), font=("Arial", 14), bg=background_color).grid(row=row_index, column=2, padx=5, pady=5)
+        Label(table_frame, text=category, font=("Arial", 14), bg=background_color).grid(row=row_index, column=0, padx=5, pady=5)
+        Label(table_frame, text=str(data), font=("Arial", 14), bg=background_color).grid(row=row_index, column=1, padx=5, pady=5)
+        Label(table_frame, text=str(data_1), font=("Arial", 14), bg=background_color).grid(row=row_index, column=2, padx=5, pady=5)
         row_index += 1
-#-----------If I want the checkbox for print the first three line of minimum value then remove the command----------------#
-'''
-    hello = tk.IntVar()
-    tk.Checkbutton(frame_4, text="", variable=hello, onvalue=1, offvalue=0, bg=background_color).place(relx=0.42, rely=0.22, anchor=tk.N)
-'''
+
+#------------------------------------ Save button function ----------------------------------#
+'''def save_true_pf():
+    global sizing_data
+    p4_data_entries=[]
+    for x in range(len(data_2)):
+        for y in range(len(data_2[0])):
+        p4_data_entries.append(data_2[x][y])
+
+    sizing_data["p4_data values"] =p4_data_entries'''
 
 def update_results(*args):
     global lab
@@ -6696,162 +6689,21 @@ def update_results(*args):
     p4_location_field.config(text="location :" + str(selected_directory))
     print(modified_flag)
 
-
-'''def header(canvas, doc):
-    canvas.saveState()
-    canvas.drawImage('test.png', 40, 770, width=100, height=50)
-    canvas.restoreState()
-
-    now = timestamp = datetime.datetime.now().strftime("%d/%m/%Y")
-    header_style = ParagraphStyle(name='HeaderStyle', fontSize=12, textColor='black')
-    header_text = Paragraph(f"{now}", header_style)
-    header_text.wrapOn(canvas, inch, inch)
-    header_text.drawOn(canvas, 500, 800)
-
-def export_pdf_condition_1():
-    global first_three
-    global hello
-    global data_2
-    timestamp = datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
-    pdf_filename = f'{timestamp}.pdf'
-
-    doc = BaseDocTemplate(pdf_filename, pagesize=A4)
-    header_frame = Frame(doc.leftMargin, doc.topMargin, doc.width, doc.height)
-    header_template = PageTemplate(id='header_template', frames=[header_frame], onPage=header)
-    doc.addPageTemplates([header_template])
-
-    styles = getSampleStyleSheet()
-    title_style = styles['Title']
-    body_style = styles['BodyText']
-
-    now = datetime.datetime.now().strftime("%d/%m/%Y")
-    header_text = Paragraph(f"Date: {now}", body_style)
-
-    elements = [
-        header_text,
-        Spacer(1, 12),
-        Paragraph("True Power Factor ", title_style),
-        Spacer(1, 12),
-        Paragraph("The true power factor is a measure of how efficiently electrical power is being used. "
-                "It represents the ratio of true power (measured in watts) to apparent power (measured in volt-amperes). "
-                "A higher true power factor indicates better utilization of electrical power.", body_style),
-        Spacer(1, 20)
-    ]
-
-    primary_value_paragraph = Paragraph('Primary value : {}'.format(primary_entry.get()), body_style)
-    secondary_value_paragraph = Paragraph("Secondary value : {}".format(secondary_entry.get()), body_style)
-    elements.append(primary_value_paragraph)
-    elements.append(secondary_value_paragraph)
-    elements.append(Spacer(1, 20))
-
-    data = [["ID", "Panel Rating", "Optimal CT Ratio", "Condition", "Minimum kVAr", "Minimum kW"]]
-    data.extend([item[:4] + [item[4], item[5]] for item in data_2[1:]])
-
-    t = Table(data, repeatRows=1)
-    t.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('BOTTOMPADDING', (0, -1), (-1, 0), 20),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black)]
-    ))
-
-    elements += [t]
-
-    try:
-        content_1 = [
-            Paragraph("Optimal Panel Rating Based on Optimum kW", title_style), Spacer(1, 5)
-        ]
-        elements.extend(content_1)
-
-        table_data = [["Panel ID", "Panel Rating", "Minimum kW"]]
-        for i in range(3):
-            panel_id = first_three[i][0]
-            panel_rating = first_three[i][1]
-            panel_kw = first_three[i][2]
-            pan_rat = (panel_id, panel_rating, panel_kw)
-
-            for row in [pan_rat]:
-                table_data.append(list(row))
-
-        table = Table(table_data, repeatRows=1)
-        table.style = 'Light Grid Accent 5'
-        table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('BOTTOMPADDING', (0, -1), (-1, 0), 20),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black)]
-        ))
-        elements.append(table)
-
-    except Exception as e:
-        print("Error:", e)
-
-    doc.build(elements)
-    messagebox.showinfo("Done", "PDF file exported Successfully!!!")'''
-
-#------------- If I want check box to access the first three line of minimum value then remove the command of below code--------------#
-'''   check_box = hello.get()
-    if check_box == 1:
-        try:
-            content_1 = [
-                Paragraph("Optimal Panel Rating Based on Optimum kW", title_style), Spacer(1, 5)
-            ]
-            elements.extend(content_1)
-
-            table_data = [["Panel ID", "Panel Rating", "Minimum kW"]]
-            for i in range(3):
-                panel_id = first_three[i][0]
-                panel_rating = first_three[i][1]
-                panel_kw = first_three[i][2]
-                pan_rat = (panel_id, panel_rating, panel_kw)
-
-                for row in [pan_rat]:
-                    table_data.append(list(row))
-
-            table = Table(table_data, repeatRows=1)
-            table.setStyle(TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('BOTTOMPADDING', (0, -1), (-1, 0), 20),
-                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                ('GRID', (0, 0), (-1, -1), 1, colors.black)]
-            ))
-            elements.append(table)
-
-        except Exception as e:
-            print("Error:", e)
-
-        doc.build(elements)
-        messagebox.showinfo("Done", "PDF file exported Successfully!!!")
-
-    else:
-        doc.build(elements)
-        messagebox.showinfo("Done", "PDF file exported Successfully!!!")
-'''
 # Labels
-head_1=tk.Label(frame_1, text="True Power Factor Performance Calculator", bg=background_color, fg="Black", font=("Arial", 20, "bold"))
+head_1=Label(frame_1, text="True Power Factor Performance Calculator", bg=background_color, fg="Black", font=("Arial", 20, "bold"))
 head_1.pack(padx=10, pady=10)
-tk.Label(frame_1, text="Enter the Primary value of transformer", bg=background_color, fg="Black", font=("Arial", 14)).pack()
-primary_entry = tk.Entry(frame_1, textvariable=primary, font=("Arial", 15))
+Label(frame_1, text="Enter the Primary value of transformer", bg=background_color, fg="Black", font=("Arial", 14)).pack()
+primary_entry = Entry(frame_1, textvariable=primary, font=("Arial", 15))
 primary_entry.pack()
 
-tk.Label(frame_1, text="Enter the Secondary value of transformer", bg=background_color, fg="Black", font=("Arial", 14)).pack()
-secondary_entry = tk.Entry(frame_1, textvariable=secondary, font=("Arial", 15))
+Label(frame_1, text="Enter the Secondary value of transformer", bg=background_color, fg="Black", font=("Arial", 14)).pack()
+secondary_entry = Entry(frame_1, textvariable=secondary, font=("Arial", 15))
 secondary_entry.pack()
 
 primary.trace_add('write', update_results)
 secondary.trace_add('write', update_results)
 
-# Buttons
-tk.Button(frame_1, text="Submit", command=submit, font=("Arial", 15, "bold")).pack(padx=10, pady=10)
+Button(frame_1, text="Submit", command=submit, font=("Arial", 15, "bold")).pack(padx=10, pady=10)
 
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------#
