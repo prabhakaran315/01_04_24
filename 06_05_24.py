@@ -5649,7 +5649,6 @@ def open_child_window_logout():
 
 #-------------------------Menu bar code started----------------------#
 menu_bar = Menu(root)
-
 # Create file menu
 astramenu = Menu(menu_bar, tearoff=0)
 astramenu.add_command(label="New", command=new_document)
@@ -5661,7 +5660,14 @@ astramenu.add_command(label="Login", command=open_child_window_login)
 astramenu.add_command(label="Logout", command=open_child_window_logout)
 astramenu.add_separator()
 astramenu.add_command(label="Import", command=import_nfo_data)
-astramenu.add_command(label="Export", command=export_to_pdf)
+
+#------------------ Creating submenu for exporting PDF --------------------#
+export_sub_menu = Menu(astramenu, tearoff=0)
+export_sub_menu.add_command(label="Export", command=export_to_pdf)
+export_sub_menu.add_command(label="Export all data")
+astramenu.add_cascade(label="Export", menu=export_sub_menu)
+#------------------------ submenu ended ----------------------#
+
 astramenu.add_separator()
 astramenu.add_command(label="Clear", command=clear_contents)
 astramenu.add_separator()
@@ -6811,7 +6817,7 @@ def update_results(*args):
     global pri_less_sec
     global head_notebook
     global status_p4_entry
-    print(lab)
+    print(pri_less_sec)
     for widget in frame_4.winfo_children():
         widget.destroy()
     for widget_1 in frame_6.winfo_children():
@@ -6844,9 +6850,43 @@ primary.trace_add('write', update_results)
 secondary.trace_add('write', update_results)
 
 Button(frame_1, text="Submit", command=submit, font=("Arial", 15, "bold")).pack(padx=10, pady=10)
-
-
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------#
+
+#-------------------------Access the buttons by keys--------------------------#
+def on_enter_key(event):
+    if (astranotebook.index(astranotebook.select()) == 0):
+        process()
+    if (astranotebook.index(astranotebook.select()) == 1):
+        process()
+    if (astranotebook.index(astranotebook.select()) == 2):
+        process()
+    if (astranotebook.index(astranotebook.select()) == 3):
+        submit()
+
+def on_ctrl_a(event):
+    if event.state & 0x4 and event.keysym == "a":
+        astranotebook.select(0)
+def on_ctrl_1(event):
+    if event.state & 0x4 and event.keysym == "1":
+        astranotebook.select(0)
+def on_ctrl_2(event):
+    if event.state & 0x4 and event.keysym == "2":
+        astranotebook.select(1)
+def on_ctrl_3(event):
+    if event.state & 0x4 and event.keysym == "3":
+        astranotebook.select(2)
+def on_ctrl_4(event):
+    if event.state & 0x4 and event.keysym == "4":
+        astranotebook.select(3)
+
+root.bind("<Return>", on_enter_key)
+root.bind("<Control-KeyPress-1>", on_ctrl_1)
+root.bind("<Control-KeyPress-2>", on_ctrl_2)
+root.bind("<Control-KeyPress-3>", on_ctrl_3)
+root.bind("<Control-KeyPress-4>", on_ctrl_4)
+
+
+#-------------------------------------------------------#
 
 # maximize the window
 root.state('zoomed')
