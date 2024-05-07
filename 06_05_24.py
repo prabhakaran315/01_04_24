@@ -39,7 +39,6 @@ import uuid
 #------------------------------------#
 
 #------------------Libraries ended---------------------#
-'''
 # while compling to excel uncomment this :
 if sys.platform.startswith('win'):
     # Redirect stdout and stderr to null device
@@ -59,7 +58,7 @@ def stdout_redirector(stream):
         yield
     finally:
         sys.stdout = old_stdout
-'''
+
 #-----------------Creating windows and assign empty values for variables-------------#
 
 root = Tk()
@@ -71,10 +70,6 @@ root.configure(bg="white")
 # root.wm_iconbitmap("")
 root.resizable(False, False)
 harmonicsentries = []
-
-#------------------ this below array for PF -----------------#
-p4_power_factor = []
-
 valueerrorflag = 0
 fault = 0
 page1_frequency = 0
@@ -164,7 +159,7 @@ def enable_modified_flag(*args):
         p3_location_field.config(text="location :" + str(selected_directory))
         p4_location_field.config(text="location :" + str(selected_directory))
         print(modified_flag)
-
+    #----------- 4th notebook of True Power Factor ---------------#
     if (astranotebook.index(astranotebook.select()) == 3):
         astranotebook.tab(3, text="True Power Factor*")
         p4_modified_indication.config(text="*")
@@ -1488,16 +1483,16 @@ def export_to_pdf():
         except:
             pass
 
-#-------------------- True power factor export button code ------------------#
+#-------------------- True power factor export to PDF ------------------#
     if (astranotebook.index(astranotebook.select()) == 3):
         submit()
         try:
             if primary_entry.get() and secondary_entry.get():
-                lab.config(text="")
+                pri_less_sec.config(text="")
                 #astranotebook.tab(3, text="True Power Factor")
                 #p4_modified_indication.config(text="")
                 #head_1.config(text="True Power Factor Performance Calculator")
-                export_ini.config(text="Export initiated...")
+                status_p4_entry.config(text="Export initiated...")
 
                 if export_dir_name == '':
                     export_dir_name = filedialog.asksaveasfilename(
@@ -1555,12 +1550,12 @@ def export_to_pdf():
 
                 # Update the cell text using loops
                 for i in range(12):
-                    table.cell(i + 1, 0).text = str(data_2[i + 1][0])
-                    table.cell(i + 1, 1).text = str(data_2[i + 1][1])
-                    table.cell(i + 1, 2).text = str(data_2[i + 1][2])
-                    table.cell(i + 1, 3).text = str(data_2[i + 1][3])
-                    table.cell(i + 1, 4).text = str(data_2[i + 1][4])
-                    table.cell(i + 1, 5).text = str(data_2[i + 1][5])
+                    table.cell(i + 1, 0).text = str(rec_tab_val[i + 1][0])
+                    table.cell(i + 1, 1).text = str(rec_tab_val[i + 1][1])
+                    table.cell(i + 1, 2).text = str(rec_tab_val[i + 1][2])
+                    table.cell(i + 1, 3).text = str(rec_tab_val[i + 1][3])
+                    table.cell(i + 1, 4).text = str(rec_tab_val[i + 1][4])
+                    table.cell(i + 1, 5).text = str(rec_tab_val[i + 1][5])
 
                 # Make table headers bold and adjust row height
                 for row in table.rows:
@@ -1592,9 +1587,9 @@ def export_to_pdf():
 
                 # Update the cell text using loops for second table
                 for i in range(3):
-                    panel_id = first_three[i][0]
-                    panel_rating = first_three[i][1]
-                    panel_kw = first_three[i][2]
+                    panel_id = minimum_kw[i][0]
+                    panel_rating = minimum_kw[i][1]
+                    panel_kw = minimum_kw[i][2]
 
                     table_1.cell(i + 1, 0).text = str(panel_id)
                     table_1.cell(i + 1, 1).text = str(panel_rating)
@@ -1649,12 +1644,12 @@ def export_to_pdf():
                 os.remove(str(export_file_name) + ".docx")
 
                 save_nfo()
-                export_ini.config(text="Export Completed...")
+                status_p4_entry.config(text="Export Completed...")
                 astranotebook.tab(3, text="True Power Factor")
                 p4_modified_indication.config(text="")
             else:
-                #messagebox.showerror('Input Error', "Fill the both entries")
-                export_ini.config(text="You need to enter the entry values")
+                messagebox.showerror('Input Error', "Fill the both entries")
+                status_p4_entry.config(text="You need to enter the entry values")
 
         except:
             pass
@@ -2752,7 +2747,7 @@ astramakep1.tag_config("red", foreground="red", background="#F6F6F8", font=('Ver
 astramakep1.configure(state="disabled")
 
 # Copy Right Lable - page - 1
-astracoprightp1 = Label(logoframe1, text="© 2023, InPhase | All Rights Reserved")
+astracoprightp1 = Label(logoframe1, text="© 2024, InPhase | All Rights Reserved")
 astracoprightp1.configure(font=('Verdana', 8), bg="#F6F6F8")
 astracoprightp1.grid(row=1, column=0)
 
@@ -2779,7 +2774,7 @@ astramakep2.tag_config("red", foreground="red", background="#F6F6F8", font=('Ver
 astramakep2.configure(state="disabled")
 
 # Copy Right Lable - page - 2
-astracoprightp2 = Label(logoframe2, text="© 2023, InPhase | All Rights Reserved")
+astracoprightp2 = Label(logoframe2, text="© 2024, InPhase | All Rights Reserved")
 astracoprightp2.configure(font=('Verdana', 8), bg="#F6F6F8")
 astracoprightp2.grid(row=1, column=0)
 
@@ -2806,7 +2801,7 @@ astramakep3.tag_config("red", foreground="red", background="#F6F6F8", font=('Ver
 astramakep3.configure(state="disabled")
 
 # Copy Right Lable - page - 3
-astracoprightp3 = Label(logoframe3, text="© 2023, InPhase | All Rights Reserved")
+astracoprightp3 = Label(logoframe3, text="© 2024, InPhase | All Rights Reserved")
 astracoprightp3.configure(font=('Verdana', 8), bg="#F6F6F8")
 astracoprightp3.grid(row=1, column=0)
 
@@ -2833,7 +2828,7 @@ astramakep4.tag_config("red", foreground="red", background="#F6F6F8", font=('Ver
 astramakep4.configure(state="disabled")
 
 # Copy Right Lable - page - 4
-astracoprightp4 = Label(logoframe4, text="© 2023, InPhase | All Rights Reserved")
+astracoprightp4 = Label(logoframe4, text="© 2024, InPhase | All Rights Reserved")
 astracoprightp4.configure(font=('Verdana', 8), bg="#F6F6F8")
 astracoprightp4.grid(row=1, column=0)'''
 
@@ -3414,7 +3409,7 @@ def update_result(*args):
                 widget.destroy()
             for widget_1 in frame_6.winfo_children():
                 widget_1.destroy()
-            lab.config(text="")
+            pri_less_sec.config(text="")
             astranotebook.tab(3, text="True Power Factor*")
 
             p4_modified_indication.config(text="*")
@@ -4036,7 +4031,7 @@ def compile_save_data():
 
     disable_modified_flag()
     global sizing_data, p4_data_entries
-    global data_2, first_three
+    global rec_tab_val, minimum_kw
     p1_data_entries = []
     p2_data_entries = []
     p3_data_entries = []
@@ -4049,11 +4044,11 @@ def compile_save_data():
         p2_data_entries.append(p2_harmonicsentries[x].get())
     for x in range(0, len(p3_harmonicsentries)):
         p3_data_entries.append(p3_harmonicsentries[x].get())
-    for x in range(len(data_2)):
-        for y in range(len(data_2[0])):
-            p4_data_entries.append(data_2[x][y])
-    for x in range(0, len(first_three)):
-        p4_sugg_entries.append(first_three[x])
+    for x in range(len(rec_tab_val)):
+        for y in range(len(rec_tab_val[0])):
+            p4_data_entries.append(rec_tab_val[x][y])
+    for x in range(0, len(minimum_kw)):
+        p4_sugg_entries.append(minimum_kw[x])
     print("P4_data_entries : ", p4_sugg_entries)
 
     # enable_at_save()
@@ -4986,8 +4981,8 @@ def import_nfo_data():
                 for y, item in enumerate(row):
                     if isinstance(item, int) or isinstance(item, str):
                         font_style = ("Arial", 15, "bold") if x == 0 else ("Arial", 15)
-                        true_pf = Label(frame_4, text=str(item), width=20, anchor="center", font=font_style, borderwidth=1, relief="solid", bg=background_color)
-                        true_pf.grid(row=x, column=y, padx=0, pady=0, sticky="nsew")
+                        rec_table = Label(frame_4, text=str(item), width=20, anchor="center", font=font_style, borderwidth=1, relief="solid", bg=background_color)
+                        rec_table.grid(row=x, column=y, padx=0, pady=0, sticky="nsew")
 
                         # Get the data from 'imported_data'
             hello_data_1 = imported_data['p4_suggestion values']
@@ -5170,6 +5165,7 @@ def validate_licensing():
 
         msgbox_result = messagebox.showerror("License", "Activate to proceed")
 
+        status_p4_entry.config(text="Activate to proceed")
 
     elif (validate_license_flag == 404):
         # if the software could not able to reach the data base for validation
@@ -6614,11 +6610,11 @@ frame_3.pack(expand=True, fill=BOTH)
 frame_6 = Frame(frame_5, height=250,width=800, bg=background_color)
 frame_6.pack(expand=True, anchor=CENTER)
 
-lab = Label(frame_1, text="", bg=background_color, fg="Red", font=("Arial", 16, "bold"))
-lab.place(relx=0.92, rely=0.9,anchor=SE)
+pri_less_sec = Label(frame_1, text="", bg=background_color, fg="Red", font=("Arial", 16, "bold"))
+pri_less_sec.place(relx=0.92, rely=0.9,anchor=SE)
 
-export_ini = Label(frame_3, text="", font=("Arial", 18, "bold"),bg=background_color, fg="Red")
-export_ini.place(relx=0.5, rely=0.5, anchor=CENTER)
+status_p4_entry = Label(frame_3, text="", font=("Arial", 18, "bold"),bg=background_color, fg="Red")
+status_p4_entry.place(relx=0.5, rely=0.5, anchor=CENTER)
 
 # location field - page - 4
 p4_location_field = Label(frame_3, text="location :" + str(selected_directory))
@@ -6649,7 +6645,7 @@ astramakep4.tag_config("red", foreground="red", background="#F6F6F8", font=('Ver
 astramakep4.configure(state="disabled")
 
 # Copy Right Lable - page - 4
-astracoprightp4 = Label(logoframe4, text="© 2023, InPhase | All Rights Reserved")
+astracoprightp4 = Label(logoframe4, text="© 2024, InPhase | All Rights Reserved")
 astracoprightp4.configure(font=('Verdana', 8), bg="#F6F6F8")
 astracoprightp4.grid(row=1, column=0)
 
@@ -6668,46 +6664,45 @@ def submit():
         elif not primary_entry.get() and not secondary_entry.get():
             messagebox.showerror("Error!", "Enter both values")
 
-        value_1 = float(primary_entry.get())
-        value_2 = float(secondary_entry.get())
-        if value_1 > 0 and value_2 > 0:
-            if value_1 > value_2:
-                cal_opt_val = round(value_1 / value_2)
-                condition_1(value_1, value_2, cal_opt_val)
+        pri_val = float(primary_entry.get())
+        sec_val = float(secondary_entry.get())
+        if pri_val > 0 and sec_val > 0:
+            if pri_val > sec_val:
+                cal_opt_val = round(pri_val / sec_val)
+                condition_1(pri_val, sec_val, cal_opt_val)
             else:
-                lab.config(text="Warning: primary value is less than secondary value")
-                p_l_S = messagebox.askyesnocancel('Conformation', "Warning: primary value is less than secondary value.\n\tDo you want to swap the values?")
-                if p_l_S == True:
+                pri_less_sec.config(text="Warning: primary value is less than secondary value")
+                swap_proceed = messagebox.askyesnocancel('Conformation', "Warning: primary value is less than secondary value.\n\tDo you want to swap the values?")
+                if swap_proceed == True:
                     temp = float(primary_entry.get())
-                    value_1 = float(secondary_entry.get())
-                    value_2 = temp
+                    pri_val = float(secondary_entry.get())
+                    sec_val = temp
                     messagebox.showinfo('Processed', "Values are swapped and processed")
-                    cal_opt_val = round(value_1 / value_2)
-                    condition_1(value_1, value_2, cal_opt_val)
+                    cal_opt_val = round(pri_val / sec_val)
+                    condition_1(pri_val, sec_val, cal_opt_val)
 
-                elif p_l_S == False:
+                elif swap_proceed == False:
                     messagebox.showinfo('Processed', "You entered value is processed")
-                    cal_opt_val = round(value_1 / value_2)
-                    condition_1(value_1, value_2, cal_opt_val)
+                    cal_opt_val = round(pri_val / sec_val)
+                    condition_1(pri_val, sec_val, cal_opt_val)
 
         else:
             messagebox.showerror('Error!', "Enter positive integers and greater than zero values")
     except :
         pass
         '''messagebox.showerror("Error!", "Enter both values as numbers")
-            export_ini.config(text="Enter the both values...")'''
+            status_p4_entry.config(text="Enter the both values...")'''
 
-def condition_1(value_1, value_2, cal_opt_val):
+#------------------- Submit button command function --------------------#
+def condition_1(pri_val, sec_val, cal_opt_val):
     global hello, rows, columns
-    global first_three
-    global data_2
-    global true_pf
+    global minimum_kw
+    global rec_tab_val
 
-
-    kva = math.floor(1.732 * 415.0 * (value_1 / 1000))
+    kva = math.floor(1.732 * 415.0 * (pri_val / 1000))
     kvar = math.ceil(kva * 0.03)
     kw = math.ceil(kva * 0.05)
-    data_1 = [
+    opt_ct_ratio = [
             ["ID", "Panel Rating", "Optimal CT Ratio", "Condition", "Minimum kVAr", "Minimum kW"],
             [1, "630A ASTRA - B03", 1252, "", "", ""],
             [2, "630A ASTRA - B05", 1809, "", "", ""],
@@ -6722,7 +6717,7 @@ def condition_1(value_1, value_2, cal_opt_val):
             [11, "150A ASTRA - B05", 835, "", "", ""],
             [12, "150A ASTRA - B10", 1669, "", "", ""]
         ]
-    data_3 = [
+    opt_kw = [
             ["Optimal kW"],
             [225],
             [325],
@@ -6737,73 +6732,78 @@ def condition_1(value_1, value_2, cal_opt_val):
             [150],
             [300]
         ]
-    rows = len(data_1)
-    columns = len(data_1[0])
+    rows = len(opt_ct_ratio)
+    columns = len(opt_ct_ratio[0])
 
-    data_2 = [row[:] for row in data_1]
+    rec_tab_val = [row[:] for row in opt_ct_ratio]
     #print("Data 2 : ", data_2)
-    for row_idx, row in enumerate(data_2[1:], start=1):
+    for row_idx, row in enumerate(rec_tab_val[1:], start=1):
         data_val = row[2]
         if data_val < cal_opt_val:
             row[3:5] = "Condition - 1", kvar, kw
         else:
-            if row_idx < len(data_3):
-                row[3:5] = "Condition - 2", "-", data_3[row_idx][0]
+            if row_idx < len(opt_kw):
+                row[3:5] = "Condition - 2", "-", opt_kw[row_idx][0]
 
     for widget in frame_4.winfo_children():
         widget.destroy()
 
     #WATCH
-    for x in range(len(data_2)):
-        for y in range(len(data_2[0])):
+    for x in range(len(rec_tab_val)):
+        for y in range(len(rec_tab_val[0])):
             font_style = ("Arial", 15, "bold") if x == 0 else ("Arial", 15)
-            true_pf = Label(frame_4, text=data_2[x][y], width=20, anchor="center",bg=background_color, borderwidth=1, relief="solid", font=font_style)
-            true_pf.grid(row=x, column=y, padx=0, pady=0, sticky="nsew")
-            print(data_2[x][y])
+            #------------------------------------- To generate the Labels in table format -------------------------------#
+            rec_table = Label(frame_4, text=rec_tab_val[x][y], width=20, anchor="center",bg=background_color, borderwidth=1, relief="solid", font=font_style)
+            rec_table.grid(row=x, column=y, padx=0, pady=0, sticky="nsew")
+            print(rec_tab_val[x][y])
 
-    first_three = []
-    sort_column = sorted(data_2, key=lambda x: str(x[2]))
+    minimum_kw = []
+    sort_column = sorted(rec_tab_val, key=lambda x: str(x[2]))
     first = sort_column[:3]
     for row in sort_column:
         if str(row[5]) in [str(item[5]) for item in first]:
-            first_three.append((row[0], row[1], row[5]))
+            minimum_kw.append((row[0], row[1], row[5]))
 
     table_frame = Frame(frame_6, bg=background_color)
-    table_frame.grid(row=len(data_1) + 1, column=0, columnspan=3, pady=10)
+    table_frame.grid(row=len(opt_ct_ratio) + 1, column=0, columnspan=3, pady=10)
 
-    Label(table_frame, text="Optimal Panel Rating Based on Optimum kW", font=("Arial", 16, "bold"), bg=background_color).grid(row=0, column=0, columnspan=5, padx=9, pady=5)
-    Label(table_frame, text="Panel ID ", font=("Arial", 14, "bold"), bg=background_color, width=20).grid(row=1, column=0, padx=5, pady=5)
-    Label(table_frame, text="Panel Rating", font=("Arial", 14, "bold"), bg=background_color, width=20).grid(row=1, column=1, padx=5, pady=5)
-    Label(table_frame, text="Minimum kW", font=("Arial", 14, "bold"), bg=background_color, width=20).grid(row=1, column=2, padx=5, pady=5)
+    sugg_lable_head_1 = Label(table_frame, text="Optimal Panel Rating Based on Optimum kW", font=("Arial", 16, "bold"), bg=background_color)
+    sugg_lable_head_1.grid(row=0, column=0, columnspan=5, padx=9, pady=5)
+    sugg_lable_head_2 = Label(table_frame, text="Panel ID ", font=("Arial", 14, "bold"), bg=background_color, width=20)
+    sugg_lable_head_2.grid(row=1, column=0, padx=5, pady=5)
+    sugg_lable_head_3 = Label(table_frame, text="Panel Rating", font=("Arial", 14, "bold"), bg=background_color, width=20)
+    sugg_lable_head_3.grid(row=1, column=1, padx=5, pady=5)
+    sugg_lable_head_4 = Label(table_frame, text="Minimum kW", font=("Arial", 14, "bold"), bg=background_color, width=20)
+    sugg_lable_head_4.grid(row=1, column=2, padx=5, pady=5)
 
     row_index = 2
-    for i in range(min(3, len(first_three))):
-        panel_id = first_three[i][0]
-        panel_rating = first_three[i][1]
-        panel_kw = first_three[i][2]
+    for i in range(min(3, len(minimum_kw))):
+        panel_id = minimum_kw[i][0]
+        panel_rating = minimum_kw[i][1]
+        panel_kw = minimum_kw[i][2]
         pan_rat = (panel_id, panel_rating, panel_kw)
 
-        category, data, data_1 = pan_rat
+        category, data, opt_ct_ratio = pan_rat
 
-        Label(table_frame, text=category, font=("Arial", 14), bg=background_color, width=20).grid(row=row_index, column=0, padx=5, pady=5)
-        Label(table_frame, text=str(data), font=("Arial", 14), bg=background_color, width=20).grid(row=row_index, column=1, padx=5, pady=5)
-        Label(table_frame, text=str(data_1), font=("Arial", 14), bg=background_color, width=20).grid(row=row_index, column=2, padx=5, pady=5)
+        sugg_pan_id = Label(table_frame, text=category, font=("Arial", 14), bg=background_color, width=20).grid(row=row_index, column=0, padx=5, pady=5)
+        sugg_pan_rat = Label(table_frame, text=str(data), font=("Arial", 14), bg=background_color, width=20).grid(row=row_index, column=1, padx=5, pady=5)
+        sugg_pan_kw = Label(table_frame, text=str(opt_ct_ratio), font=("Arial", 14), bg=background_color, width=20).grid(row=row_index, column=2, padx=5, pady=5)
         row_index += 1
-    print("First_three : ", first_three)
-
+    print("minimum_kw : ", minimum_kw)
+#-------------------------- reset the entry and frames ---------------------#
 def update_results(*args):
-    global lab
-    global head_1
-    global export_ini
+    global pri_less_sec
+    global head_notebook
+    global status_p4_entry
     print(lab)
     for widget in frame_4.winfo_children():
         widget.destroy()
     for widget_1 in frame_6.winfo_children():
         widget_1.destroy()
-    lab.config(text="")
-    export_ini.config(text="")
+    pri_less_sec.config(text="")
+    status_p4_entry.config(text="")
     #astranotebook.tab(3, text="True Power Factor*")
-    print(head_1)
+    print(head_notebook)
     #head_1.config(text="True Power Factor Performance Calculator*")
     enable_modified_flag()
     # p4_modified_indication.config(text="*")
@@ -6814,8 +6814,8 @@ def update_results(*args):
     print(modified_flag)
 
 # Labels
-head_1=Label(frame_1, text="True Power Factor Performance Calculator", bg=background_color, fg="Black", font=("Arial", 20, "bold"))
-head_1.pack(padx=10, pady=10)
+head_notebook=Label(frame_1, text="True Power Factor Performance Calculator", bg=background_color, fg="Black", font=("Arial", 20, "bold"))
+head_notebook.pack(padx=10, pady=10)
 Label(frame_1, text="Enter the Primary value of transformer", bg=background_color, fg="Black", font=("Arial", 14)).pack()
 primary_entry = Entry(frame_1, textvariable=primary, font=("Arial", 15))
 primary_entry.pack()
