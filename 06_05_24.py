@@ -5054,11 +5054,36 @@ def validate_licensing():
         validate_license_flag = 404
     response_data = server_response.json()
     print("Response data", response_data)
+    # Assuming response_data is a dictionary with a key 'status'
+    lic_sts = response_data['status']
+    lic_validity = response_data['validity']
+
+    # ---------------------------- License details lable function ------------------------#
+    p1_lic_sts = Label(astrap1_frame, text=f"License Status   : {lic_sts}", bg=background_color, font=("Arial", 15)).place(relx=0.84, rely=0.035, anchor=W)
+    p1_lic_val = Label(astrap1_frame, text=f"License Validity : {lic_validity}", bg=background_color, font=("Arial", 15)).place(relx=0.84, rely=0.069, anchor=W)
+
+    p2_lic_sts = Label(astrap2_frame, text=f"License Status   : {lic_sts}", bg=background_color, font=("Arial", 15)).place(relx=0.84, rely=0.035, anchor=W)
+    p2_lic_val = Label(astrap2_frame, text=f"License Validity : {lic_validity}", bg=background_color, font=("Arial", 15)).place(relx=0.84, rely=0.069, anchor=W)
+
+    p3_lic_sts = Label(astrap3_frame, text=f"License Status   : {lic_sts}", bg=background_color, font=("Arial", 15)).place(relx=0.84, rely=0.035, anchor=W)
+    p3_lic_val = Label(astrap3_frame, text=f"License Validity : {lic_validity}", bg=background_color, font=("Arial", 15)).place(relx=0.84, rely=0.069, anchor=W)
+
+    p4_lic_sts = Label(frame_1, text=f"License Status   : {lic_sts}", bg=background_color, font=("Arial", 15)).place(relx=0.84, rely=0.15, anchor=W)
+    p4_lic_val = Label(frame_1, text=f"License Validity : {lic_validity}", bg=background_color, font=("Arial", 15)).place(relx=0.84, rely=0.3, anchor=W)
+    # ------------------------- Lables details lable function ended ----------------------#
 
     if (response_data['status'] == "Valid"):
         validate_license_flag = 1
+        p1_lic_sts.config(fg="Green")
+        p2_lic_sts.config(fg="Green")
+        p3_lic_sts.config(fg="Green")
+        p4_lic_sts.config(fg="Green")
     else:
         validate_license_flag = 0
+        p1_lic_sts.config(fg="Red")
+        p2_lic_sts.config(fg="Red")
+        p3_lic_sts.config(fg="Red")
+        p4_lic_sts.config(fg="Red")
 
     if (validate_license_flag == 1):
         # if the software is Registered
