@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 import math
-
+import numpy as np
 from PySimpleGUI import MsgBox
 from docx import Document
 from docx.shared import RGBColor
@@ -72,6 +72,7 @@ root.configure(bg="white")
 root.resizable(False, False)
 harmonicsentries = []
 
+#------------------ this below array for PF -----------------#
 p4_power_factor = []
 
 valueerrorflag = 0
@@ -205,6 +206,15 @@ def disable_modified_flag(*args):
         p3_location_field.config(text="location :" + str(selected_directory))
         p4_location_field.config(text="location :" + str(selected_directory))
         print(modified_flag)
+
+    if (astranotebook.index(astranotebook.select()) == 3):
+        astranotebook.tab(3, text="True Power Factor")
+        p4_modified_indication.config(text="")
+        location_field.config(text="location :" + str(selected_directory))
+        p2_location_field.config(text="location :" + str(selected_directory))
+        p3_location_field.config(text="location :" + str(selected_directory))
+        p4_location_field.config(text="location :" + str(selected_directory))
+        print('modified flag : ', modified_flag)
 
 #------------make rows bold--------------#
 def make_rows_bold(*rows):
@@ -4025,12 +4035,13 @@ def compile_save_data():
     # collecting the all the intial data value
 
     disable_modified_flag()
-    global sizing_data
-    global data_2
+    global sizing_data, p4_data_entries
+    global data_2, first_three
     p1_data_entries = []
     p2_data_entries = []
     p3_data_entries = []
     p4_data_entries = []
+    p4_sugg_entries = []
 
     for x in range(0, len(harmonicsentries)):
         p1_data_entries.append(harmonicsentries[x].get())
@@ -4038,8 +4049,12 @@ def compile_save_data():
         p2_data_entries.append(p2_harmonicsentries[x].get())
     for x in range(0, len(p3_harmonicsentries)):
         p3_data_entries.append(p3_harmonicsentries[x].get())
-    for x in range(0, len(p4_power_factor)):
-        p4_data_entries.append(p4_power_factor[x])
+    for x in range(len(data_2)):
+        for y in range(len(data_2[0])):
+            p4_data_entries.append(data_2[x][y])
+    for x in range(0, len(first_three)):
+        p4_sugg_entries.append(first_three[x])
+    print("P4_data_entries : ", p4_sugg_entries)
 
     # enable_at_save()
     sizing_data = {
@@ -4088,8 +4103,9 @@ def compile_save_data():
         'p4_primary value': primary_entry.get(),
         'p4_secondary value': secondary_entry.get(),
         'p4_data values': p4_data_entries,
+        'p4_suggestion values': p4_sugg_entries,
     }
-    print("P4_Entries value : ", p4_data_entries)
+    print("P4_Entries value : ", p4_sugg_entries)
 
 
 #-------------------Compile save data is ended---------------#
@@ -4502,7 +4518,7 @@ def import_nfo_data():
     # importing page -1 data
 
     global modified_flag, save_flag, export_progress_flag, page1_frequency, selected_directory, export_dir_name, selected_file_name
-    global page2_frequency, page3_frequency, import_progress_flag, true_pf, rows, columns
+    global page2_frequency, page3_frequency, import_progress_flag
 
     import_progress_flag = 1
     if (modified_flag == 1):
@@ -4926,21 +4942,25 @@ def import_nfo_data():
                 p3_comment_box_message.insert(1.0, str(imported_data['p3_comments']))
                 p3_comment_box_message.config(fg='black')
                 # posting the retrieving data in page -3
-
+            global p4_data_entries
             astranotebook.select(astrap4_frame)
+            print("importing...")
+            #print(p4_data_entries)
                 # Select the second tab without changing the currently selected tab or showing/hiding any tabs
                 # astranotebook.tab(astrap3_frame, state=NORMAL)
                 # inserting the page - 2 harmonic entries
-            for x in range(0, 20):
-
+            for x in range(0, 2):
+                print("Done - 1")
                 if (x == 0):
                     primary_entry.config(state='normal')
                     primary_entry.delete(0, "end")
                     primary_entry.insert(0, str(imported_data['p4_primary value']))
                     primary_entry.config(state='disable')
+                    print("Done - 2")
                 else:
                     primary_entry.delete(0, "end")
                     primary_entry.insert(0, str(imported_data['p4_primary value']))
+                    print("Done - 2A")
 
             # enable_at_save()
             primary_entry.config(state='normal')
@@ -4952,22 +4972,51 @@ def import_nfo_data():
             secondary_entry.insert(0, str(imported_data['p4_secondary value']))
             secondary_entry.config(state='normal')
 
-            hello=(imported_data['p4_data values'])
-            hello_2 = [row_1[:] for row_1 in hello]
-            print("Hello : ", hello)
+            # Get the data from 'imported_data'
+            hello_data = imported_data['p4_data values']
+            # Determine the appropriate shape based on the length of data and the desired rows/columns
+            num_rows = 13  # Adjust this based on your requirement
+            #num_cols = len(hello_data) // num_rows  # Calculate the number of columns
+            num_cols = 6  # Calculate the number of columns
+            # Reshape the data into the desired shape
+            reshaped_data = np.array(hello_data).reshape(num_rows, num_cols)
 
-            for x, row in (true_pf_import):  # Start from index 1 to skip the header row
-                print("DATA -- x : ", x)
-                #print("DATA -- row : ", row)
+            # Iterate over the reshaped data to populate GUI elements
+            for x, row in enumerate(reshaped_data):
                 for y, item in enumerate(row):
-                    print("DATA -- y : ", y)
-                    #print("DATA -- item : ", item)
                     if isinstance(item, int) or isinstance(item, str):
-                        print(item)  # Just for debugging, you can remove this line
                         font_style = ("Arial", 15, "bold") if x == 0 else ("Arial", 15)
-
-                        true_pf = Label(frame_4, text=item, width=20, anchor="center", bg=background_color, borderwidth=1, relief="solid", font=font_style)
+                        true_pf = Label(frame_4, text=str(item), width=20, anchor="center", font=font_style, borderwidth=1, relief="solid", bg=background_color)
                         true_pf.grid(row=x, column=y, padx=0, pady=0, sticky="nsew")
+
+                        # Get the data from 'imported_data'
+            hello_data_1 = imported_data['p4_suggestion values']
+            print("hello - 1 : ", hello_data_1)
+
+            # Determine the appropriate shape based on the length of data and the desired rows/columns
+            num_rows_1 = 3  # Adjust this based on your requirement
+            num_cols_1 = 3  # Calculate the number of columns
+
+            # Reshape the data into the desired shape
+            reshaped_data_1 = np.array(hello_data_1).reshape(num_rows_1, num_cols_1)
+
+            # Add the label "Optimal Panel Rating Based on Optimum kW"
+            Label(frame_6, text="Optimal Panel Rating Based on Optimum kW", font=("Arial", 16, "bold"), bg=background_color).grid(row=0, column=0, columnspan=num_cols_1, padx=9, pady=5)
+
+            # Add the headings for the three columns
+            headings = ["Panel ID", "Panel Rating", "Minimum kW"]
+
+            # Create and place the headings labels in the GUI
+            for col, heading in enumerate(headings):
+                Label(frame_6, text=heading, width=20, anchor="center", font=("Arial", 15, "bold"), bg=background_color).grid(row=1, column=col, padx=5, pady=5, sticky="nsew")
+
+            # Iterate over the reshaped data to populate GUI elements
+            for a, row_1 in enumerate(reshaped_data_1, start=1):  # Start at row 2 to skip the headings row and the label row
+                for b, item_1 in enumerate(row_1):
+                    if isinstance(item_1, int) or isinstance(item_1, str):
+                        font_style = ("Arial", 14)
+                        Label(frame_6, text=str(item_1), width=20, anchor="center", font=font_style,
+                              bg=background_color).grid(row=a, column=b, padx=5, pady=5, sticky="nsew")
 
             location_field.config(text="location :" + str(selected_directory))
             p2_location_field.config(text="location :" + str(selected_directory))
@@ -6544,12 +6593,12 @@ Label(astrap4_frame, text="", bg=background_color).pack()
 frame_4 = Frame(frame_2, height=314,width=1200, bg=background_color)
 frame_4.pack(expand=True, anchor=CENTER)
 
-for x in range(0, 13):
+'''for x in range(0, 13):
     for y in range(0, 6):
         font_style = ("Arial", 15, "bold")
-        true_pf = Label(frame_4, text="", width=20, anchor="center", bg=background_color, borderwidth=1, relief="solid", font=font_style)
+        true_pf = Label(frame_4, text="", width=20, anchor="center", bg=background_color, font=font_style)
         true_pf.grid(row=x, column=y, padx=0, pady=0, sticky="nsew")
-        #print(data_2[x][y])
+        #print(data_2[x][y])'''
 
 #------------------this frame for label the suggestion name---------------------#
 frame_5 = Frame(astrap4_frame, height=250, bg=background_color, highlightbackground="Black", highlightthickness=2)
@@ -6609,6 +6658,8 @@ secondary = StringVar()
 
 def submit():
     global lab
+    for widget_1 in frame_6.winfo_children():
+        widget_1.destroy()
     try:
         if not primary_entry.get():
             messagebox.showerror("Error!", "Enter primary values")
@@ -6702,6 +6753,7 @@ def condition_1(value_1, value_2, cal_opt_val):
     for widget in frame_4.winfo_children():
         widget.destroy()
 
+    #WATCH
     for x in range(len(data_2)):
         for y in range(len(data_2[0])):
             font_style = ("Arial", 15, "bold") if x == 0 else ("Arial", 15)
@@ -6710,7 +6762,7 @@ def condition_1(value_1, value_2, cal_opt_val):
             print(data_2[x][y])
 
     first_three = []
-    sort_column = sorted(data_2, key=lambda x: str(x[5]))
+    sort_column = sorted(data_2, key=lambda x: str(x[2]))
     first = sort_column[:3]
     for row in sort_column:
         if str(row[5]) in [str(item[5]) for item in first]:
@@ -6720,9 +6772,9 @@ def condition_1(value_1, value_2, cal_opt_val):
     table_frame.grid(row=len(data_1) + 1, column=0, columnspan=3, pady=10)
 
     Label(table_frame, text="Optimal Panel Rating Based on Optimum kW", font=("Arial", 16, "bold"), bg=background_color).grid(row=0, column=0, columnspan=5, padx=9, pady=5)
-    Label(table_frame, text="Panel ID ", font=("Arial", 14, "bold"), bg=background_color).grid(row=1, column=0, padx=5, pady=5)
-    Label(table_frame, text="Panel Rating", font=("Arial", 14, "bold"), bg=background_color).grid(row=1, column=1, padx=5, pady=5)
-    Label(table_frame, text="Minimum kW", font=("Arial", 14, "bold"), bg=background_color).grid(row=1, column=2, padx=5, pady=5)
+    Label(table_frame, text="Panel ID ", font=("Arial", 14, "bold"), bg=background_color, width=20).grid(row=1, column=0, padx=5, pady=5)
+    Label(table_frame, text="Panel Rating", font=("Arial", 14, "bold"), bg=background_color, width=20).grid(row=1, column=1, padx=5, pady=5)
+    Label(table_frame, text="Minimum kW", font=("Arial", 14, "bold"), bg=background_color, width=20).grid(row=1, column=2, padx=5, pady=5)
 
     row_index = 2
     for i in range(min(3, len(first_three))):
@@ -6733,20 +6785,11 @@ def condition_1(value_1, value_2, cal_opt_val):
 
         category, data, data_1 = pan_rat
 
-        Label(table_frame, text=category, font=("Arial", 14), bg=background_color).grid(row=row_index, column=0, padx=5, pady=5)
-        Label(table_frame, text=str(data), font=("Arial", 14), bg=background_color).grid(row=row_index, column=1, padx=5, pady=5)
-        Label(table_frame, text=str(data_1), font=("Arial", 14), bg=background_color).grid(row=row_index, column=2, padx=5, pady=5)
+        Label(table_frame, text=category, font=("Arial", 14), bg=background_color, width=20).grid(row=row_index, column=0, padx=5, pady=5)
+        Label(table_frame, text=str(data), font=("Arial", 14), bg=background_color, width=20).grid(row=row_index, column=1, padx=5, pady=5)
+        Label(table_frame, text=str(data_1), font=("Arial", 14), bg=background_color, width=20).grid(row=row_index, column=2, padx=5, pady=5)
         row_index += 1
-
-#------------------------------------ Save button function ----------------------------------#
-'''def save_true_pf():
-    global sizing_data
-    p4_data_entries=[]
-    for x in range(len(data_2)):
-        for y in range(len(data_2[0])):
-        p4_data_entries.append(data_2[x][y])
-
-    sizing_data["p4_data values"] =p4_data_entries'''
+    print("First_three : ", first_three)
 
 def update_results(*args):
     global lab
