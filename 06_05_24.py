@@ -40,7 +40,7 @@ import uuid
 
 #------------------Libraries ended---------------------#
 # while compling to excel uncomment this :
-if sys.platform.startswith('win'):
+'''if sys.platform.startswith('win'):
     # Redirect stdout and stderr to null device
     # to avoid console window popup
     startupinfo = subprocess.STARTUPINFO()
@@ -57,7 +57,7 @@ def stdout_redirector(stream):
     try:
         yield
     finally:
-        sys.stdout = old_stdout
+        sys.stdout = old_stdout'''
 
 #-----------------Creating windows and assign empty values for variables-------------#
 
@@ -5163,7 +5163,7 @@ def validate_licensing():
         status_p3_entry.insert(0, "Vist licensing to proceed")
         status_p3_entry.config(borderwidth=2, state="disable")
 
-        msgbox_result = messagebox.showerror("License", "Activate to proceed")
+        msgbox_result = messagebox.showerror("License", "Activate to proceed_1")
 
         status_p4_entry.config(text="Activate to proceed")
 
@@ -5323,6 +5323,14 @@ def activate_licensing():
         status_p1_entry.config(borderwidth=2, state="normal")
         status_p1_entry.delete(0, "end")
         status_p1_entry.config(borderwidth=2, state="disable")
+        status_p2_entry.config(borderwidth=2, state="normal")
+        status_p2_entry.delete(0, "end")
+        status_p2_entry.config(borderwidth=2, state="disable")
+        status_p3_entry.config(borderwidth=2, state="normal")
+        status_p3_entry.delete(0, "end")
+        status_p3_entry.config(borderwidth=2, state="disable")
+        status_p4_entry.config(text="")
+
         msgbox_result = messagebox.showinfo("Authentication", "Activation Successful")
         if (msgbox_result == "ok"): activation_window.destroy()
         validate_licensing()  # -- remove this
@@ -5330,6 +5338,14 @@ def activate_licensing():
         status_p1_entry.config(borderwidth=2, state="normal")
         status_p1_entry.delete(0, "end")
         status_p1_entry.config(borderwidth=2, state="disable")
+        status_p2_entry.config(borderwidth=2, state="normal")
+        status_p2_entry.delete(0, "end")
+        status_p2_entry.config(borderwidth=2, state="disable")
+        status_p3_entry.config(borderwidth=2, state="normal")
+        status_p3_entry.delete(0, "end")
+        status_p3_entry.config(borderwidth=2, state="disable")
+        status_p4_entry.config(text="")
+
         msgbox_result = messagebox.showinfo("Authentication", "Already Registered")
         if (msgbox_result == "ok"): activation_window.destroy()
         validate_licensing()  # -- remove this
@@ -6846,5 +6862,5 @@ selection_process()
 astranotebook.select(astrap1_frame)
 selection_process()
 import_progress_flag = 0
-#validate_licensing() #remove this code 29-APR-2024
+validate_licensing() #remove this code 29-APR-2024
 root.mainloop()
