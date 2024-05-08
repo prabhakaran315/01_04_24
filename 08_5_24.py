@@ -6895,19 +6895,6 @@ Button(frame_1, text="Submit", command=submit, font=("Arial", 12, "bold")).pack(
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 #-------------------------Access the buttons by keys--------------------------#
-def on_enter_key(event):
-    if (astranotebook.index(astranotebook.select()) == 0):
-        process()
-    if (astranotebook.index(astranotebook.select()) == 1):
-        process()
-    if (astranotebook.index(astranotebook.select()) == 2):
-        process()
-    if (astranotebook.index(astranotebook.select()) == 3):
-        submit()
-
-def on_ctrl_a(event):
-    if event.state & 0x4 and event.keysym == "a":
-        astranotebook.select(0)
 def on_ctrl_1(event):
     if event.state & 0x4 and event.keysym == "1":
         astranotebook.select(0)
@@ -6921,7 +6908,6 @@ def on_ctrl_4(event):
     if event.state & 0x4 and event.keysym == "4":
         astranotebook.select(3)
 
-root.bind("<Return>", on_enter_key)
 root.bind("<Control-KeyPress-1>", on_ctrl_1)
 root.bind("<Control-KeyPress-2>", on_ctrl_2)
 root.bind("<Control-KeyPress-3>", on_ctrl_3)
