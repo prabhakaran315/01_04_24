@@ -1519,7 +1519,6 @@ def export_to_pdf():
                     export_file_name = selected_file_name
                     status_p4_entry.config(text="Export initiated...")
 
-
                 doc = Document()
                 # Adding Header to the Document
                 header = doc.sections[0].header
@@ -1569,7 +1568,7 @@ def export_to_pdf():
                 table.style = 'Light Grid Accent 5'
 
                 # Add Title to the document
-                doc.add_heading('True Power Factor Performance Calculator :', level=1)
+                doc.add_heading('True Power Factor Performance Recommendation :', level=1)
 
                 # Create table
                 table = doc.add_table(rows=13, cols=6)
@@ -1614,8 +1613,7 @@ def export_to_pdf():
                 war = doc.add_paragraph(f"\n{comparison_text}")
                 font = war.runs[0].font
                 font.color.rgb = RGBColor(255, 0, 0)
-                #font = war.font
-                #font.color.rgb = RGBColor(255, 0, 0)
+
                 # Add Title to the document
                 doc.add_heading('Suggestion :', level=1)
                 # Create second table
@@ -1694,7 +1692,6 @@ def export_to_pdf():
                 os.remove(str(export_file_name) + ".docx")
 
                 save_nfo()
-                status_p4_entry.config(text="Export Completed...")
                 astranotebook.tab(3, text="True Power Factor")
                 head_notebook.config(text="True Power Factor Performance Calculator  ")
             else:
@@ -6866,7 +6863,7 @@ def condition_1(pri_val, sec_val, cal_opt_val):
             print(rec_tab_val[x][y])
 
     minimum_kw = []
-    sort_column = sorted(rec_tab_val, key=lambda x: str(x[2]))
+    sort_column = sorted(rec_tab_val, key=lambda x: str(x[5]))
     first = sort_column[:3]
     for row in sort_column:
         if str(row[5]) in [str(item[5]) for item in first]:
