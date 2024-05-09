@@ -9,6 +9,7 @@ from PIL import ImageTk, Image
 from PySimpleGUI import MsgBox
 from docx import Document
 from docx.shared import RGBColor
+from docx.shared import RGBColor, Inches, Cm
 from docx2pdf import convert
 import os
 from tkinter import filedialog
@@ -1495,14 +1496,14 @@ def export_to_pdf():
         submit()
         try:
             if primary_entry.get() and secondary_entry.get():
-                pri_less_sec.config(text="")
+                #pri_less_sec.config(text="")
                 #astranotebook.tab(3, text="True Power Factor")
                 #p4_modified_indication.config(text="")
                 #head_1.config(text="True Power Factor Performance Calculator")
-                status_p4_entry.config(text="Export initiated...")
 
                 if export_dir_name == '':
                     export_dir_name = filedialog.asksaveasfilename(title="Export As",filetypes=(("PDF", "*.docx"), ("All Files", "*.*")),initialfile="Design Document")
+                    status_p4_entry.config(text="Export initiated...")
 
                     try:
                         os.chdir(os.path.dirname(export_dir_name))
@@ -1510,11 +1511,14 @@ def export_to_pdf():
                         # Set selected directory and file name
                         selected_directory = export_dir_name
                         selected_file_name = export_file_name
+                        status_p4_entry.config(text="Export initiated...")
                     except OSError as e:
                         print("Error changing directory:", e)
                 else:
                     export_dir_name = selected_directory
                     export_file_name = selected_file_name
+                    status_p4_entry.config(text="Export initiated...")
+
 
                 doc = Document()
                 # Adding Header to the Document
@@ -1522,6 +1526,47 @@ def export_to_pdf():
                 header_para = header.paragraphs[0]
                 header_para.text = "InPhase Power Technologies - ASTRA Sizing Document"
                 header_para.alignment = WD_TABLE_ALIGNMENT.CENTER
+                comparison_text = pri_less_sec['text']
+                print("comparison : ",comparison_text)
+                # Add a heading
+                doc.add_heading('Transformer Inputs:', level=1)
+
+                # Create a table
+                table = doc.add_table(rows=2, cols=2)
+                table.alignment = WD_TABLE_ALIGNMENT.CENTER
+
+                # Define headings and values
+                headings = ['Primary','Secondary' ]
+                values = [f'{primary_entry.get()}', f'{secondary_entry.get()}']
+
+                # Populate table headings and values
+                for i, (heading, value) in enumerate(zip(headings, values)):
+                    cell = table.cell(i, 0)
+                    cell.text = heading
+                    cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+                    cell.width = Inches(2)
+                    
+
+                    cell = table.cell(i, 1)
+                    cell.text = value
+                    cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+                    cell.width = Inches(2)
+
+                # Set row height
+                for row in table.rows:
+                    row.height = Cm(0.6)
+
+                # Align text horizontally in cells
+                for row in table.rows:
+                    for cell in row.cells:
+                        for paragraph in cell.paragraphs:
+                            for run in paragraph.runs:
+                                run.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+                # Set table style
+                table.style = 'Light Grid Accent 5'
 
                 # Add Title to the document
                 doc.add_heading('True Power Factor Performance Calculator :', level=1)
@@ -1559,7 +1604,6 @@ def export_to_pdf():
                     table.cell(i + 1, 3).text = str(rec_tab_val[i + 1][3])
                     table.cell(i + 1, 4).text = str(rec_tab_val[i + 1][4])
                     table.cell(i + 1, 5).text = str(rec_tab_val[i + 1][5])
-
                 # Make table headers bold and adjust row height
                 for row in table.rows:
                     for cell in row.cells:
@@ -1567,22 +1611,25 @@ def export_to_pdf():
                         for paragraph in cell.paragraphs:
                             paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 
+                war = doc.add_paragraph(f"\n{comparison_text}")
+                font = war.runs[0].font
+                font.color.rgb = RGBColor(255, 0, 0)
+                #font = war.font
+                #font.color.rgb = RGBColor(255, 0, 0)
                 # Add Title to the document
                 doc.add_heading('Suggestion :', level=1)
-
                 # Create second table
                 table_1 = doc.add_table(rows=4, cols=3)
                 table_1.alignment = WD_TABLE_ALIGNMENT.CENTER
 
                 headings_1 = ['ID', 'Panel Rating', 'Minimum kW']
                 column_widths_1 = [Inches(0.5), Inches(2), Inches(2)]
-
+                print("Headings - 4 : ", headings_1)
                 # Set table headers and properties for second table
                 for i, (heading, width) in enumerate(zip(headings_1, column_widths_1)):
                     cell = table_1.cell(0, i)
                     cell.text = heading
                     cell.width = width
-
                     # Align text vertically and horizontally
                     cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
                     for paragraph in cell.paragraphs:
@@ -1625,8 +1672,8 @@ def export_to_pdf():
                 section = doc.sections[0]
                 section.left_margin = Inches(0.7)
                 section.right_margin = Inches(0.7)
-                section.top_margin = Inches(1.0)
-                section.bottom_margin = Inches(1.0)
+                section.top_margin = Inches(0.5)
+                section.bottom_margin = Inches(0.5)
                 # Set border around the entire page with 0.5 inches margin
                 # Adding a border to a Page
                 sec_pr = doc.sections[0]._sectPr  # get the section properties el
@@ -6730,20 +6777,22 @@ def submit():
                 cal_opt_val = round(pri_val / sec_val)
                 condition_1(pri_val, sec_val, cal_opt_val)
             else:
-                pri_less_sec.config(text="Warning: primary value is less than secondary value")
                 swap_proceed = messagebox.askyesnocancel('Conformation', "Warning: primary value is less than secondary value.\n\tDo you want to swap the values?")
                 if swap_proceed == True:
                     temp = float(primary_entry.get())
                     pri_val = float(secondary_entry.get())
                     sec_val = temp
+                    pri_less_sec.config(text="Warning: Primary and Secondary values are swapped")
                     messagebox.showinfo('Processed', "Values are swapped and processed")
                     cal_opt_val = round(pri_val / sec_val)
                     condition_1(pri_val, sec_val, cal_opt_val)
 
                 elif swap_proceed == False:
+                    pri_less_sec.config(text="Warning: primary value is less than secondary value")
                     messagebox.showinfo('Processed', "You entered value is processed")
                     cal_opt_val = round(pri_val / sec_val)
                     condition_1(pri_val, sec_val, cal_opt_val)
+
 
         else:
             messagebox.showerror('Error!', "Enter positive integers and greater than zero values")
@@ -6875,11 +6924,11 @@ def update_results(*args):
 # Labels
 head_notebook=Label(frame_1, text="True Power Factor Performance Calculator  ", bg=background_color, fg="Black", font=("Arial", 17))
 head_notebook.pack(padx=10, pady=10)
-pri_ent_label = Label(frame_1, text="Primary value of transformer", bg=background_color, fg="Black", font=("Arial", 11)).place(relx=0.35, rely=0.48, anchor=W)
+pri_ent_label = Label(frame_1, text="Primary value", bg=background_color, fg="Black", font=("Arial", 11)).place(relx=0.35, rely=0.48, anchor=W)
 primary_entry = Entry(frame_1, textvariable=primary, font=("Arial", 11))
 primary_entry.place(relx=0.52, rely=0.48, anchor=W)
 
-sec_ent_label = Label(frame_1, text="Secondary value of transformer", bg=background_color, fg="Black", font=("Arial", 11)).place(relx=0.35, rely=0.75, anchor=W)
+sec_ent_label = Label(frame_1, text="Secondary value", bg=background_color, fg="Black", font=("Arial", 11)).place(relx=0.35, rely=0.75, anchor=W)
 secondary_entry = Entry(frame_1, textvariable=secondary, font=("Arial", 11))
 secondary_entry.place(relx=0.52, rely=0.75, anchor=W)
 
