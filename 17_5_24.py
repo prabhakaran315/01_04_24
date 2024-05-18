@@ -5828,7 +5828,7 @@ try:
         date_obj = datetime.strptime(lic_validity, "%Y-%m-%d")
         new_date_str = date_obj.strftime("%d-%b-%Y")
 
-        messagebox.showinfo("License Status", f"License Status     : {lic_sts}\nLicense Validity   : {new_date_str}")
+        messagebox.showinfo("License Status", f"License Status     : {lic_sts}\n\nLicense Validity   : {new_date_str}")
 
 
     # ------------------- License Status Ended ---------------#
