@@ -1559,7 +1559,7 @@ try:
                     table = doc.add_table(rows=6, cols=2)
                     table.alignment = WD_TABLE_ALIGNMENT.CENTER
                     # Define headings and values
-                    headings = ['Model', 'Grid kW value', 'Min. PF', 'Max. Pf', 'Unit diff. / day (low)', 'Unit diff. / day (high)']
+                    headings = ['Model', 'Grid kW value', 'Min. PF', 'Max. Pf', 'Unit diff./day (low)', 'Unit diff./day (high)']
                     values = [f'{panel_rating_combo.get()}', f'{grid_kw_entry.get()}',f'{float(low_pf_entry.get())}', f'{float(high_pf_entry.get())}', f'{float(unit_diff_entry_1.get())}', f'{float(unit_diff_entry_2.get())}']
 
                     # Populate table headings and values
@@ -1600,7 +1600,7 @@ try:
                     table = doc.add_table(rows=13, cols=4)
                     table.alignment = WD_TABLE_ALIGNMENT.CENTER
 
-                    headings = ['Panel ID', 'Panel Rating', 'Max PF', 'Unit diff. / Day']
+                    headings = ['Panel ID', 'Panel Rating', 'Max PF', 'Unit diff./Day']
                     # headings.extend(item[:4] + [item[4], item[5]] for item in data_2[1:])
                     column_widths = [Inches(0.8), Inches(2.3), Inches(2.3), Inches(1.8)]
 
@@ -1640,11 +1640,15 @@ try:
 
                     # Add Title to the document
                     doc.add_heading('Suggestion :', level=1)
-
+                    try:
+                        #doc.add_heading("Panel report", 1)
+                        output_cont = doc.add_paragraph(str(output_content['text']))
+                    except:
+                        pass
                     table_1 = doc.add_table(rows=4, cols=4)  # Adjusted to 4 rows
                     # Set table alignment
                     table_1.alignment = WD_TABLE_ALIGNMENT.CENTER
-                    headings_1 = ['Panel ID', 'Panel Rating', 'Max.PF', 'Unit diff. / day']
+                    headings_1 = ['Panel ID', 'Panel Rating', 'Max.PF', 'Unit diff./day']
                     column_widths_1 = [Inches(0.5), Inches(2), Inches(2), Inches(2)]
 
                     # Set table headers and properties
@@ -6936,7 +6940,7 @@ try:
     max_pf_achieve = Label(astrap4_frame, text = "Max PF ", font = ("Verdana", 14), bg=background_color)
     max_pf_achieve.place(x=100, y=225)
 
-    unit_diff = Label(astrap4_frame, text="Unit diff. /day", font=("Verdana", 14), bg=background_color)
+    unit_diff = Label(astrap4_frame, text="Unit diff./day", font=("Verdana", 14), bg=background_color)
     unit_diff.place(x=100, y=185)
 
     output_content = Label(astrap4_frame, text="", font=("Verdana", 14), bg=background_color, justify="left",anchor="w")
@@ -7078,19 +7082,21 @@ try:
             unit_diff_value = round((kva-kw_val)*24, 2)
             row[2:4] = pf, unit_diff_value
             all_label.append((row[0], row[1], row[2], row[3]))
-            #Label(astrap4_frame, text=row).place(x=10, y=10*row_idx)
+            #Label(astrap4_frame, text=all_label).place(x=10, y=10*3)
             # Check the power factor against thresholds
-            if pf >= hpf or pf >= lpf:
+            '''if pf >= lpf or pf <= hpf :
                 row[2:4] = pf, unit_diff_value
-                sugg.append((row[0], row[1], row[2], row[3]))
-        while len(sugg) < 3:
-            sugg.append(["NA", "NA", "NA", "NA"])
+                sugg.append((row[0], row[1], row[2], row[3]))'''
+            '''while len(sugg) < 3:
+                sugg.append(["NA", "NA", "NA", "NA"])'''
 
         minimum_kw = []
-        sort_column = sorted(sugg, key=lambda x: str(x[2]))
+        sort_column = sorted(all_label, key=lambda x: x[3])
+        #Label(astrap4_frame,text = sort_column).place(x=10, y=100)
         first = sort_column[:3]
+        #Label(astrap4_frame, text=first).place(x=10, y=20)
         for row in first:
-            if str(row[2]) in [str(item[2]) for item in first]:
+            if str(row[3]) in [str(item[3]) for item in first]:
                 minimum_kw.append((row[0], row[1], row[2], row[3]))
 
         # Create empty cells below each column
@@ -7188,8 +7194,8 @@ try:
                                 unit_diff_value_2 = float(round((kva_2 - kw_val) * 24, 2))
 
                                 if pf >= str(hpf):
-                                    output_content.config(text=f"The desired power factor range of {lpf} to {hpf} is achieved by the selected model {panel_rating_combo.get()}\n"
-                                                               f" The maximum achievable power factor with the provided active power is {pf}. Please check the\n"
+                                    output_content.config(text=f"The desired power factor range of '{lpf}' to '{hpf}' is achieved by the selected model '{panel_rating_combo.get()}'\n"
+                                                               f"The maximum achievable power factor with the provided active power is '{pf}'. Please check the\n"
                                                                "table below for optimized model selection."
                                                           ,height=3, borderwidth=1, relief="solid")
 
@@ -7212,9 +7218,9 @@ try:
 
                                 elif pf <= str(hpf) and pf >= str(lpf):
                                     output_content.config(
-                                        text=f"The desired range's lower power factor of {lpf} is achievable by the selected model {panel_rating_combo.get()}\n"
-                                             f"However, the range's higher power factor of {hpf} is not achievable. The maximum achievable power\n"
-                                             f"factor with the provided active power is {pf}. Please check the table below for optimized model selection."
+                                        text=f"The desired range's lower power factor of '{lpf}' is achievable by the selected model '{panel_rating_combo.get()}'\n"
+                                             f"However, the range's higher power factor of '{hpf}' is not achievable. The maximum achievable power\n"
+                                             f"factor with the provided active power is '{pf}'. Please check the table below for optimized model selection."
                                     ,height=3, borderwidth=1, relief="solid")
 
                                     max_pf_entry.config(state='normal')
@@ -7236,8 +7242,8 @@ try:
 
                                 else:
                                     output_content.config(
-                                        text=f"The desired power factor range of {lpf} to {hpf} is not achieved by the selected model {panel_rating_combo.get()}\n"
-                                             f"The maximum achievable power factor with the provided active power is {pf}. Please check the table below\n"
+                                        text=f"The desired power factor range of '{lpf}' to '{hpf}' is not achieved by the selected model '{panel_rating_combo.get()}'\n"
+                                             f"The maximum achievable power factor with the provided active power is '{pf}'. Please check the table below\n"
                                              "for optimized model selection."
                                     ,height=3, borderwidth=1, relief="solid")
 
@@ -7303,7 +7309,7 @@ try:
     p4_comment_box_message.bind('<FocusOut>', on_focus_out)
 
 
-    # -----------------------------------------------------------------------------------------------------------------------------------------------------------#
+    # -------------------------------------------------------------- True Power Factor Ended --------------------------------------------------------------#
 
     # -------------------------Access the buttons by keys--------------------------#
     def on_ctrl_1(event):
@@ -7326,16 +7332,13 @@ try:
         if event.state & 0x4 and event.keysym == "s":
             save_nfo()
 
-    def on_ctrl_S(event):
-        if event.state & 0x4 and event.keysym == "s":
-            saveas_nfo()
 
     def on_ctrl_i(event):
         if event.state & 0x4 and event.keysym == "i":
             import_nfo_data()
 
     def on_ctrl_e(event):
-        if event.state & 0x4 and event.keysym == "i":
+        if event.state & 0x4 and event.keysym == "e":
             export_to_pdf()
 
     root.bind("<Control-KeyPress-1>", on_ctrl_1)
@@ -7343,7 +7346,6 @@ try:
     root.bind("<Control-KeyPress-3>", on_ctrl_3)
     root.bind("<Control-KeyPress-4>", on_ctrl_4)
     root.bind("<Control-s>", on_ctrl_s)
-    root.bind("<Control-Shift-s>", on_ctrl_S)
     root.bind("<Control-i>", on_ctrl_i)
     root.bind("<Control-e>", on_ctrl_e)
 
