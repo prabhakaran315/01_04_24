@@ -1536,19 +1536,19 @@ try:
                     font_style = messagebox.askyesno("Font Style",
                                                      f"Default Font style is '{selected_font.get()}' press yes to change the cont style")
                     if font_style == True:
-                        font_frame = Frame(astrap4_frame, bg='red', width = 255, height = 100)
+                        font_frame = Frame(astrap4_frame, bg=background_color, width = 282, height = 93, bd = 2, relief="solid")
                         font_frame.place(x=450, y=200)
-                        lable_font = Label(font_frame, text = "Select the Font from Drop down", font = ("verdana", 10, 'bold'))
-                        lable_font.place(x=0, y=0, anchor = CENTER)
+                        lable_font = Label(font_frame, text = "Select the Font style from Drop down", bg = background_color, font = ("verdana", 10, 'bold'))
+                        lable_font.place(x=0, y=0)
 
                         confirm_btn = Button(font_frame, text = "Confirm", bg=background_color, font = ("Verdana", 10), command = true_pf_pdf)
-                        confirm_btn.place(x=100, y=60)
+                        confirm_btn.place(x=130, y=53)
 
                         select_btn = Button(font_frame, text = "select", bg=background_color, font = ("Verdana", 10), command = selected_btn)
-                        select_btn.place(x=10, y=60)
+                        select_btn.place(x=70, y=53)
 
-                        font_drop = ttk.Combobox(font_frame, textvariable=selected_font, values=font_families, width=35)
-                        font_drop.place(x=10, y=25)
+                        font_drop = ttk.Combobox(font_frame, textvariable=selected_font, values=font_families, width=30, font = ('Verdana', 10))
+                        font_drop.place(x=9, y=25)
 
                         if confirm_btn == True:
                             for widget in font_frame.winfo_children():
@@ -1569,7 +1569,7 @@ try:
     def selected_btn():
         global selected_font, test_font
         font_st = selected_font.get()
-        test_font.config(text="You are selected this font!", font=(font_st, 12))
+        test_font.config(text='"You are selected this font style!"', font=(font_st, 12))
 
     def true_pf_pdf():
 
@@ -2951,8 +2951,8 @@ try:
     astrap4_frame = Canvas(root, bg=background_color, highlightthickness=0)
     astrap4_frame.pack(fill='both', expand=1)
 
-    test_font = Label(astrap4_frame, bg = background_color, text="", font=(selected_font.get(), 10))
-    test_font.place(x=460, y=305)
+    test_font = Label(astrap4_frame, bg = background_color, text="", font=(selected_font.get(), 12))
+    test_font.place(x=455, y=295)
 
     height = astrap4_frame.winfo_height()
     for i in range(height):
